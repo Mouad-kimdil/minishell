@@ -1,0 +1,77 @@
+➜  Minishell git:(main) ✗ env -i ./minishell 
+Minishell-$ export
+Minishell-$ env
+Minishell-$ cd -
+cd: (null): No such file or directory
+(null)
+Minishell-$ cd ..
+Minishell-$ cd -
+cd: (null): No such file or directory
+(null)
+Minishell-$ cd ~
+Minishell-$ cd 
+cd: HOME not set
+Minishell-$ export > cat
+open: Permission denied
+minishell: export: `>': not a valid identifier
+Minishell-$ export > ca 
+open: Permission denied
+minishell: export: `>': not a valid identifier
+Minishell-$ 
+*****************************
+➜  Minishell git:(main) ✗ ./minishell 
+Minishell-$ ls <| cat
+ls: <: No such file or directory
+Minishell-$ Minishell-$ ls >| cat
+ls: >: No such file or directory
+Minishell-$ ls |> cat
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==28645==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x000104c92dad bp 0x7ffeeaf7a0f0 sp 0x7ffeeaf7a0c0 T0)
+==28645==The signal is caused by a READ memory access.
+==28645==Hint: address points to the zero page.
+    #0 0x104c92dad in check+0x5d (minishell:x86_64+0x10000ddad)
+    #1 0x104c92e88 in command+0x18 (minishell:x86_64+0x10000de88)
+    #2 0x104c95894 in execution+0x1994 (minishell:x86_64+0x100010894)
+    #3 0x104c896ba in main+0x35a (minishell:x86_64+0x1000046ba)
+    #4 0x7fff6bbefcc8 in start+0x0 (libdyld.dylib:x86_64+0x1acc8)
+
+==28645==Register values:
+rax = 0x0000000000000000  rbx = 0x00007ffeeaf7a1a0  rcx = 0x0000100000000000  rdx = 0x0000100000000000  
+rdi = 0x0000000000000000  rsi = 0x0000612000000600  rbp = 0x00007ffeeaf7a0f0  rsp = 0x00007ffeeaf7a0c0  
+ r8 = 0x0000000000000403   r9 = 0x0000000000000000  r10 = 0x00001c060000083e  r11 = 0x0000000000000246  
+r12 = 0x0000000000000000  r13 = 0x0000000000000000  r14 = 0x0000000000000000  r15 = 0x0000000000000000  
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (minishell:x86_64+0x10000ddad) in check+0x5d
+==28645==ABORTING
+Minishell-$ 
+➜  Minishell git:(main) ✗ ./minishell 
+Minishell-$ ls |> cat
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==29041==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x00010fd5cdad bp 0x7ffedfeb00f0 sp 0x7ffedfeb00c0 T0)
+==29041==The signal is caused by a READ memory access.
+==29041==Hint: address points to the zero page.
+    #0 0x10fd5cdad in check+0x5d (minishell:x86_64+0x10000ddad)
+    #1 0x10fd5ce88 in command+0x18 (minishell:x86_64+0x10000de88)
+    #2 0x10fd5f894 in execution+0x1994 (minishell:x86_64+0x100010894)
+    #3 0x10fd536ba in main+0x35a (minishell:x86_64+0x1000046ba)
+    #4 0x7fff6bbefcc8 in start+0x0 (libdyld.dylib:x86_64+0x1acc8)
+
+==29041==Register values:
+rax = 0x0000000000000000  rbx = 0x00007ffedfeb01a0  rcx = 0x0000100000000000  rdx = 0x0000100000000000  
+rdi = 0x0000000000000000  rsi = 0x0000612000000300  rbp = 0x00007ffedfeb00f0  rsp = 0x00007ffedfeb00c0  
+ r8 = 0x0000000000000403   r9 = 0x0000000000000000  r10 = 0x00001c060000075a  r11 = 0x0000000000000246  
+r12 = 0x0000000000000000  r13 = 0x0000000000000000  r14 = 0x0000000000000000  r15 = 0x0000000000000000  
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (minishell:x86_64+0x10000ddad) in check+0x5d
+==29041==ABORTING
+Minishell-$ ps
+  PID TTY           TIME CMD
+55679 ttys001    0:00.44 -zsh
+29005 ttys003    0:00.14 ./minishell
+55058 ttys003    0:02.72 /bin/zsh -il
+70831 ttys005    0:00.45 /bin/zsh -il
+70932 ttys005    0:00.02 bash
+Minishell-$ ls <|> cat
+**********************************************************
