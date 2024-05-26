@@ -4,17 +4,22 @@ SRCS = Minishell.c parsing.c split.c strings.c error.c add_space.c qoutes.c \
 INC = minishell.h
 NAME = minishell
 CC = cc
+READLINE_PREFIX = $(shell brew --prefix readline)
+READLINE_INCLUDE = $(READLINE_PREFIX)/include
+READLINE_LIB = $(READLINE_PREFIX)/lib
+LIBS = -L$(READLINE_LIB) -lreadline -lncurses
+INCLUDES = -I$(READLINE_INCLUDE)
 FLAGS = -Wall -Wextra -Werror -fsanitize=address
 OBJS = $(addprefix obj/, $(SRCS:.c=.o))
 
 all: ${NAME}
 
 ${NAME}: ${OBJS}
-	${CC} ${FLAGS} ${OBJS} -lreadline -o ${NAME}
+	${CC} ${FLAGS} ${OBJS} ${LIBS} -o ${NAME}
 
 obj/%.o: %.c ${INC}
 	@mkdir -p $(dir $@)
-	${CC} ${FLAGS} -c $< -o $@
+	${CC} ${FLAGS} ${INCLUDES} -c $< -o $@
 
 clean:
 	rm -rf obj

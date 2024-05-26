@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/05/25 22:16:05 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/05/26 16:37:37 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 
 # define	GREEN  "\033[0;34m"
 # define	NC  "\033[0m"
+
+int g_signal_status;
 
 typedef struct s_env
 {
