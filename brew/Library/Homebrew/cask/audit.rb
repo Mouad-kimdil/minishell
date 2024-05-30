@@ -47,6 +47,12 @@ module Cask
       @token_conflicts = token_conflicts
       @only = only || []
       @except = except || []
+
+      # Clean up `#extract_artifacts` tmp dir when Audit object is destroyed
+      ObjectSpace.define_finalizer(
+        self,
+        proc { FileUtils.remove_entry(@tmpdir) if @tmpdir },
+      )
     end
 
     def run!
@@ -480,13 +486,25 @@ module Cask
       odebug "Auditing signing"
 
       extract_artifacts do |artifacts, tmpdir|
+        is_container = artifacts.any? { |a| a.is_a?(Artifact::App) || a.is_a?(Artifact::Pkg) }
+
         artifacts.each do |artifact|
+          next if artifact.is_a?(Artifact::Binary) && is_container == true
+
           artifact_path = artifact.is_a?(Artifact::Pkg) ? artifact.path : artifact.source
+
           path = tmpdir/artifact_path.relative_path_from(cask.staged_path)
 
-          next unless path.exist?
-
-          result = system_command("spctl", args: ["--assess", "--type", "install", path], print_stderr: false)
+          result = case artifact
+          when Artifact::Pkg
+            system_command("spctl", args: ["--assess", "--type", "install", path], print_stderr: false)
+          when Artifact::App
+            system_command("spctl", args: ["--assess", "--type", "execute", path], print_stderr: false)
+          when Artifact::Binary
+            system_command("codesign",  args: ["--verify", path], print_stderr: false)
+          else
+            add_error "Unknown artifact type: #{artifact.class}", location: cask.url.location
+          end
 
           next if result.success?
 

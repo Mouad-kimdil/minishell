@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 04:01:04 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/05/26 16:40:31 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/05/30 14:45:52 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,29 +44,38 @@ void	remove_qoutes(t_cmd **lst)
 	}
 }
 
-void function_sigint(int sig)
+void	function_sigint(int sig)
 {
-    if (sig == SIGINT && g_signal_status == 0)
-    {
-        write(1, "\n", 1);
-        rl_replace_line("", 0);
-        rl_on_new_line();
-        rl_redisplay();
-    }
-    else if (sig == SIGINT && g_signal_status == 1)
-        write(1, "\n", 1);
+	if (sig == SIGINT && g_signal_status == 0)
+	{
+		write(1, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+	else if (sig == SIGINT && g_signal_status == 1)
+		write(1, "\n", 1);
 }
 
-void    function_sigwuit(int sig)
+void	function_sigwuit(int sig)
 {
-    if (sig == SIGQUIT && g_signal_status ==1)
-        write(1, "Quit: 3\n", 8);
+	if (sig == SIGQUIT && g_signal_status ==1)
+		write(1, "Quit: 3\n", 8);
 }
 
-void check_signals()
+void	check_signals()
 {
-    signal(SIGINT, function_sigint);
-    signal(SIGQUIT, function_sigwuit);
+	signal(SIGINT, function_sigint);
+	signal(SIGQUIT, function_sigwuit);
+}
+
+void	print_delim(t_cmd *lst)
+{
+	while (lst)
+	{
+		printf("delim: %s\n", lst->delimiter);
+		lst = lst->next;
+	}
 }
 
 int main(int ac, char **av, char **env)
@@ -88,7 +97,7 @@ int main(int ac, char **av, char **env)
 	{
 		rl_catch_signals = 0;
 		check_signals();
-		temp = readline("Minishell-$ ");
+		temp = readline("Mouad_shell-$ ");
 		if (!temp)
 		{
 			printf("exit\n");
@@ -111,6 +120,12 @@ int main(int ac, char **av, char **env)
 			continue ;
 		back_to_ascii(lst);
 		remove_qoutes(&lst);
+		if (is_heredoc(lst, list))
+		{
+			here_doc(lst, list);
+			printf("ok\n");
+			continue ;
+		}
 		expand(lst, list);
 		g_signal_status = 1;
 		execution(lst, list);
