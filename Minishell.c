@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 04:01:04 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/05/30 14:45:52 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/06/01 13:33:53 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,6 @@ void	check_signals()
 	signal(SIGQUIT, function_sigwuit);
 }
 
-void	print_delim(t_cmd *lst)
-{
-	while (lst)
-	{
-		printf("delim: %s\n", lst->delimiter);
-		lst = lst->next;
-	}
-}
-
 int main(int ac, char **av, char **env)
 {
 	(void)av;
@@ -119,14 +110,11 @@ int main(int ac, char **av, char **env)
 		if (!lst)
 			continue ;
 		back_to_ascii(lst);
-		remove_qoutes(&lst);
-		if (is_heredoc(lst, list))
-		{
-			here_doc(lst, list);
-			printf("ok\n");
-			continue ;
-		}
+		if (is_heredoc(lst))
+			if (here_doc(lst))
+				continue ;
 		expand(lst, list);
+		remove_qoutes(&lst);
 		g_signal_status = 1;
 		execution(lst, list);
 		g_signal_status = 0;
