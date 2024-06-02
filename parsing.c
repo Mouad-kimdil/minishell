@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:58:20 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/05/26 23:47:07 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/06/01 13:54:05 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,9 @@ int	syn_error2(char **res)
 
 int	check_end(char *line)
 {
-	if (line[ft_strlen(line) - 1] == '|' || line[ft_strlen(line) - 1] == '>'
-		|| line[ft_strlen(line) - 1] == '<' || line[ft_strlen(line) - 1] == ')'
+	if (line[ft_strlen(line) - 1] == '|' || line[ft_strlen(line) - 1] == '>' 
+		|| (line[ft_strlen(line) - 1] == '<')
+		|| line[ft_strlen(line) - 1] == ')'
 		|| line[ft_strlen(line) - 1] == '(')
 		return (1);
 	return (0);

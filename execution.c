@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 10:59:50 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/05/24 17:39:15 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/06/02 22:43:06 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,10 @@ void	execution(t_cmd *node, t_list *list)
 	}
 	while (node->next)
 	{
+		puts("here");
 		if (check_for_redirection(node) == 1)
 		{
+			puts("here");
 			if (node->infile != 0)
 				close(node->infile);
 			if (node->outfile != 1)
@@ -108,7 +110,8 @@ void	execution(t_cmd *node, t_list *list)
 		id = safe_fork();
 		if (id == 0)
 		{
-			if (node->infile != 0)
+			puts("here");
+			if (node->infile != 0 && !node->is_heredoc)
 			{
 				if (dup2(node->infile, 0) == -1)
 					msg_error("dup2 in infile");

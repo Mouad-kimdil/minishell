@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/05/30 14:45:16 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/06/02 21:28:41 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 # define	GREEN  "\033[0;34m"
 # define	NC  "\033[0m"
-
+# define BUFFER_SIZE 33
 int g_signal_status;
 
 typedef struct s_env
@@ -43,13 +43,19 @@ typedef struct s_list
 	t_env	*envs;
 }				t_list;
 
+typedef struct s_heredoc
+{
+	char	**delimiter;
+	int		idx;
+}			t_heredoc;
+
 typedef struct s_cmd
 {
 	char			*cmd;
 	char			**argv;
-	char			*delimiter;
 	int				infile;
 	int				outfile;
+	int				is_heredoc;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -139,8 +145,10 @@ void	remove_qoutes(t_cmd **lst);
 int		check_end(char *line);
 char	**handle_expand(t_cmd *lst);
 void	print_args(t_cmd *lst);
-int		is_heredoc(t_cmd *lst, t_list *list);
-void	here_doc(t_cmd *lst, t_list *list);
-int		parse_heredoc(t_cmd *lst);
+int		is_heredoc(t_cmd *lst, t_heredoc *here);
+int		heredoc(t_cmd *lst, t_heredoc *here);
+int		set_delim(t_cmd *lst, t_heredoc *here);
+int		count_delim(t_cmd *lst);
+void	fake(t_heredoc *here);
 
 #endif
