@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:20:55 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/05/23 22:40:33 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/16 19:43:32 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,33 @@ void	update_pwd(char *path, t_list *list)
 	update_env("OLDPWD", my_getenv("PWD", list), list);
 	home = getcwd(NULL, 0);
 	update_env("PWD", home, list);
+}
+
+char	*ft_substr(char *s, int start, int len)
+{
+	int		i;
+	int		size;
+	char	*ptr;
+
+	if (!s || start >= ft_strlen(s))
+	{
+		ptr = (char *)malloc(1);
+		if (ptr)
+			ptr[0] = '\0';
+		return (ptr);
+	}
+	size = 0;
+	while (s[start + size] != '\0' && size < len)
+		size++;
+	ptr = (char *)malloc(size + 1);
+	if (!ptr)
+		return (NULL);
+	i = 0;
+	while (s[start + i] && i < size)
+	{
+		ptr[i] = s[start + i];
+		i++;
+	}
+	ptr[i] = '\0';
+	return (ptr);
 }

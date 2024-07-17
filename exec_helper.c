@@ -6,7 +6,7 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:02:46 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/05/23 16:19:52 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/16 11:01:42 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ char	*ft_strjoin_with_sep(char *s1, char *s2, char sep)
 
 int	check(char *my_argv)
 {
+	if (!my_argv)
+		return (1);
 	if (my_argv[0] == '/' || my_argv[0] == '.')
 	{
 		if (access(my_argv, F_OK | X_OK) == 0)

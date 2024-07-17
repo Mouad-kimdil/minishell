@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 13:58:20 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/06/01 13:54:05 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/06/03 06:15:16 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,16 @@ int	syn_error2(char **res)
 
 int	check_end(char *line)
 {
-	if (line[ft_strlen(line) - 1] == '|' || line[ft_strlen(line) - 1] == '>' 
-		|| (line[ft_strlen(line) - 1] == '<')
-		|| line[ft_strlen(line) - 1] == ')'
-		|| line[ft_strlen(line) - 1] == '(')
+	char	**res;
+	int		i;
+
+	res = ft_split(line, ' ');
+	i = 0;
+	while (res[i + 1])
+		i++;
+	if (res[i][0] == '|' || (ft_strcmp(res[i], "<<") == 0)
+		|| (ft_strcmp(res[i], ">>") == 0)
+		|| res[i][0] == '(' || res[i][0] == ')')
 		return (1);
 	return (0);
 }
@@ -83,8 +89,7 @@ int	syn_error(char *line)
 	if ((!ft_strncmp(res[0], "<<", 3) || !ft_strncmp(res[0], ">>", 3)
 			|| !ft_strncmp(res[0], "<", 2) || !ft_strncmp(res[0], ">", 2))
 		&& !*(res + 1))
-		return (printf("bash: syntax error near \
-		 unexpected token `newline'\n"), 1);
+		return (printf("bash: syntax error\n"), 1);
 	else if (ft_strncmp(*res, "<<", 3) == 0
 		&& (!*(res + 1) || res[1][0] == '|'))
 		return (printf("bash: syntax error near unexpected token `|'\n"), 1);
