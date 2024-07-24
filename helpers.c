@@ -6,7 +6,7 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 17:53:55 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/05/23 19:02:15 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/16 13:14:05 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,6 @@ void	close_files(t_cmd *node)
 	if (node->outfile != 1)
 		close(node->outfile);
 }
-
-// void	handle_builtin_command(t_cmd *node, int fd_int, int fd_out)
-// {
-// 	if (node->infile != 0)
-// 		close(node->infile);
-// 	if (node->outfile != 1)
-// 		close(node->outfile);
-// 	dup2(fd_int, 0);
-// 	close(fd_int);
-// 	dup2(fd_out, 0);
-// 	close(fd_out);
-// 	return ;
-// }
 
 void	safe_pipe(int fd[2])
 {

@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:53:50 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/06/01 13:45:46 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/17 04:51:49 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	ft_strlen(char *str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i])
 		i++;
 	return (i);
@@ -51,24 +53,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (ptr);
 }
 
-char	*ft_strdup(char *str)
-{
-	int		i;
-	char	*ptr;
-
-	i = 0;
-	ptr = (char *)malloc(ft_strlen(str) + 1);
-	if (!ptr)
-		return (NULL);
-	while (str[i])
-	{
-		ptr[i] = str[i];
-		i++;
-	}
-	ptr[i] = '\0';
-	return (ptr);
-}
-
 int	ft_strncmp(char *s1, char *s2, int len)
 {
 	int	i;
@@ -81,31 +65,6 @@ int	ft_strncmp(char *s1, char *s2, int len)
 		i++;
 	}
 	return (0);
-}
-
-int	ft_atoi(char *str)
-{
-	int	r;
-	int	i;
-	int	s;
-
-	r = 0;
-	i = 0;
-	s = 1;
-	while (str[i] && (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13)))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			s *= -1;
-		i++;
-	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		r = r * 10 + (str[i] - '0');
-		i++;
-	}
-	return (r * s);
 }
 
 char	*ft_strchr(char *s, int c)
@@ -124,40 +83,6 @@ char	*ft_strchr(char *s, int c)
 	return (NULL);
 }
 
-int	ft_strnstr(char *str, char *to_find)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (str[i])
-	{
-		j = 0;
-		while (str[i + j] && (str[i + j] == to_find[j]))
-			j++;
-		if (to_find[j] == '\0')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-int	ft_strcpy(char *dest, char *src)
-{
-	int	i;
-	int	len;
-
-	i = 0;
-	len = ft_strlen((char *)src);
-	while (src[i])
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (len);
-}
-
 t_cmd	*new_list(void *cmd)
 {
 	t_cmd	*ptr;
@@ -167,28 +92,5 @@ t_cmd	*new_list(void *cmd)
 		return (NULL);
 	ptr->cmd = cmd;
 	ptr->next = NULL;
-	return (ptr);
-}
-
-char	*nops_strdup(char *str)
-{
-	int		i;
-	int		j;
-	char	*ptr;
-
-	i = 0;
-	while (str[i] == ' ')
-		i++;
-	ptr = (char *)malloc(ft_strlen(str) + 2 - i);
-	if (!ptr)
-		return (NULL);
-	j = 0;
-	while (str[i])
-	{
-		ptr[j] = str[i];
-		i++;
-		j++;
-	}
-	ptr[j] = '\0';
 	return (ptr);
 }

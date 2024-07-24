@@ -6,34 +6,11 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 17:55:17 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/06/02 21:34:50 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/06/03 03:54:36 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// void	handle_duplications(t_cmd *node, int *fd)
-// {
-// 	if (node->infile != 0)
-// 	{
-// 		if (dup2(node->infile, 0) == -1)
-// 			msg_error("dup2 infile");
-// 		close(node->infile);
-// 	}
-// 	if (node->outfile != 1)
-// 	{
-// 		if (dup2(node->outfile, 1) == -1)
-// 			msg_error("dup2 outfile");
-// 		close(node->outfile);
-// 	}
-// 	else if (fd != NULL)
-// 	{
-// 		close(fd[0]);
-// 		if (dup2(fd[1], 1) == -1)
-// 			msg_error("dup2 fd[1]");
-// 		close(fd[1]);
-// 	}
-// }
 
 void	env_to_char_array_helper(t_env *current, char **envp)
 {

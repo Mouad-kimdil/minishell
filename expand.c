@@ -6,88 +6,11 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 18:16:45 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/05/25 22:16:16 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/24 03:46:09 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	ft_len(long nb)
-{
-	int	len;
-
-	len = 0;
-	if (nb == 0)
-		return (1);
-	if (nb < 0)
-	{
-		nb *= -1;
-		len++;
-	}
-	while (nb)
-	{
-		nb = nb / 10;
-		len++;
-	}
-	return (len);
-}
-
-char	*ft_itoa(int nb)
-{
-	char	*ptr;
-	int		len;
-	long	i;
-
-	i = nb;
-	len = ft_len(i);
-	ptr = (char *)malloc(sizeof(char) * (len + 1));
-	if (!ptr)
-		return (NULL);
-	ptr[len] = '\0';
-	if (i == 0)
-		ptr[0] = '0';
-	if (i < 0)
-	{
-		i = -i;
-		ptr[0] = '-';
-	}
-	while (i)
-	{
-		len--;
-		ptr[len] = 48 + (i % 10);
-		i /= 10;
-	}
-	return (ptr);
-}
-
-char	*ft_substr(char *s, int start, int len)
-{
-	int		i;
-	int		size;
-	char	*ptr;
-
-	if (!s || start >= ft_strlen(s))
-	{
-		ptr = (char *)malloc(1);
-		if (ptr)
-			ptr[0] = '\0';
-		return (ptr);
-	}
-	size = 0;
-	while (s[start + size] != '\0' && size < len)
-		size++;
-	ptr = (char *)malloc(size + 1);
-	if (!ptr)
-		return (NULL);
-	i = 0;
-	while (s[start + i] && i < size)
-	{
-		ptr[i] = s[start + i];
-		i++;
-	}
-	ptr[i] = '\0';
-	return (ptr);
-}
 
 int	special_case(char c)
 {
@@ -113,13 +36,15 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 	char	*value;
 	int		j;
 	int		k;
-
+	
 	cmd = ft_strdup("");
 	current = lst->argv[i];
 	j = 0;
 	while (current[j])
 	{
-		if (current[j] == '\'')
+		if (current[j] == '$' && current[j + 1] == '?')
+			j++;
+		else if (current[j] == '\'')
 		{
 			j++;
 			while (current[j] && current[j] != '\'')
@@ -179,30 +104,77 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 	return (cmd);
 }
 
-char	**handle_expand(t_cmd *lst)
-{
-	char	**str;
-
-	str = ft_split(lst->argv[0], ' ');
-	return (str);
-}
-
 void	expand(t_cmd *lst, t_list *envp)
 {
 	int		i;
+	int		j;
+	int		k;
+	int		tr;
+    int		argv_size;
+    char	*expanded;
+    char	**splited;
+	char	*tmp;
 
+	tr = 0;
+	tmp = NULL;
 	while (lst)
 	{
 		i = 0;
 		while (lst->argv[i])
 		{
+			if (ft_strchr(lst->argv[i], '$') && lst->argv[i + 1]
+				&& !ft_strchr(lst->argv[i + 1], '$'))
+				tmp = lst->argv[i + 1];
 			if (ft_strchr(lst->argv[i], '$'))
-				lst->argv[i] = expand_cmd(lst, envp, i);
-			
+			{
+				if (ft_strsearch(lst->argv[i], '"'))
+					tr = 1;
+				if (ft_strsearch(lst->argv[i], '\''))
+					tr = 2;
+				if (tr == 1 || tr == 0)
+				{
+					expanded = expand_cmd(lst, envp, i);
+					if (ft_strsearch(expanded, ' ') && tr == 0)
+					{
+						lst->ambiguous = 1;
+						splited = ft_split(expanded, ' ');
+						argv_size = 0;
+						while (lst->argv[argv_size])
+							argv_size++;
+						j = 0;
+						while (splited[j])
+							j++;
+						k = argv_size;
+						while (k >= i)
+						{
+							lst->argv[k + j - 1] = lst->argv[k];
+							k--;
+						}
+						j = 0;
+						k = i;
+						while (splited[j])
+						{
+							lst->argv[k] = ft_strdup(splited[j]);
+							k++;
+							j++;
+						}
+					}
+					else
+					{
+						lst->argv[i] = ft_strdup(expanded);
+						if (ft_strlen(expanded) == 0 && lst->ambiguous == 0)
+						{
+							if (tr != 1 && tr != 2)
+								lst->ambiguous = 1;
+							lst->argv[i] = NULL;
+						}
+					}
+				}
+			}
+			if (tmp && !lst->argv[i])
+				lst->argv[i] = ft_strdup(tmp);
 			i++;
 		}
-		if (ft_strchr(lst->argv[0], ' '))
-			lst->argv = handle_expand(lst);
 		lst = lst->next;
 	}
 }

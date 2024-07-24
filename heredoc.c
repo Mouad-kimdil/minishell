@@ -6,141 +6,154 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 14:55:09 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/06/02 22:12:25 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/22 22:39:01 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// void	print_args(t_cmd *lst)
-// {
-// 	int	i;
-
-// 	while (lst)
-// 	{
-// 		i = 0;
-// 		while (lst->argv[i])
-// 		{
-// 			printf("lst->argv[%d] : %s\n", i, lst->argv[i]);
-// 			printf("lst->cmd[%d] : %s\n", i, lst->cmd);
-// 			i++;
-// 		}
-// 		lst = lst->next;
-// 	}
-// }
-
-int	count_delim(t_cmd *lst)
+void	get_delim(t_cmd *lst)
 {
 	int	i;
-	int	count;
+	int	k;
+	int	delim_size;
 
-	count = 1;
-	while (lst)
+	delim_size = get_delim_size(lst) * 2;
+	lst->delim = malloc(sizeof(char *) * delim_size + 1);
+	if (!lst->delim)
+		return ;
+	i = 0;
+	k = 0;
+	while (lst->argv[i] && lst->argv[i + 1])
 	{
-		i = 0;
-		while (lst->argv[i])
+		if (!ft_strcmp(lst->argv[i], "<<"))
 		{
-			if (ft_strcmp(lst->argv[i], "<<") == 0)
-				count++;
-			i++;
+			if (ft_strchr(lst->argv[i + 1], '\'')
+				|| ft_strchr(lst->argv[i + 1], '\"'))
+					lst->in_quote = 1;
+			lst->delim[k] = ft_strdup(unquote(lst->argv[i + 1]));
+			k++;
 		}
-		lst = lst->next;
+		i++;
 	}
-	return (count);
+	lst->delim[k] = NULL;
 }
 
-int	set_delim(t_cmd *lst, t_heredoc *here)
+char	*creat_heroc(t_cmd *lst)
 {
-	int	i;
-	int	j;
-
-	j = 0;
-	here->delimiter = malloc(sizeof(char *) * count_delim(lst) + 1);
-	while (lst)
-	{
-		i = 0;
-		while (lst->argv[i])
-		{
-			if (ft_strcmp(lst->argv[i], "<<") == 0)
-			{
-				here->delimiter[j] = ft_strdup(lst->argv[i + 1]);
-				j++;
-			}
-			here->delimiter[j] = NULL;
-			i++;
-		}
-		lst = lst->next;
-	}
-	return (j);
-}
-
-int	heredoc(t_cmd *lst, t_heredoc *here)
-{
+	int		i;
 	char	*tmp;
-	int		fd;
 
-	fake(here);
-	fd = open("heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	i = 0;
+	while (++i)
+	{
+		tmp = ft_strjoin("heredoc", ft_itoa(i));
+		if (!tmp)
+			return (NULL);
+		lst->fd = open(tmp, O_RDONLY, 0644);
+		if (lst->fd == -1)
+		{
+			lst->fd = open(tmp, O_RDWR | O_CREAT | O_TRUNC, 0644);
+			if (lst->fd < 0)
+				return (NULL);
+			return (tmp);
+		}
+	}
+	return (NULL);
+}
+
+void	her_sin(int sig)
+{
+	if (sig == SIGINT)
+	{
+		close(0);
+		ex_st(1, 1);
+	}
+}
+
+int	perferm_heredoc(t_cmd *lst, int in, char *delim, t_list *env)
+{
+	char	*exp;
+	char	*tmp;
+
 	while (1)
 	{
+		signal(SIGINT, her_sin);
 		tmp = readline("> ");
-		if (!tmp || ((ft_strncmp(tmp, here->delimiter[here->idx] 
-				,ft_strlen(here->delimiter[here->idx])) == 0)
-				&& (ft_strlen(tmp) == ft_strlen(here->delimiter[here->idx]))))
+		if (!ttyname(0))
+		{
+			open(ttyname(2), O_RDWR);
+			return (1);
+		}
+		if (!tmp || ((ft_strncmp(tmp, delim, ft_strlen(delim)) == 0)
+				&& (ft_strlen(tmp) == ft_strlen(delim))))
 			break ;
-		write(fd, tmp, ft_strlen(tmp));
-		write(fd, "\n", 1);
-		free(tmp);
+		exp = expand_heredoc(tmp, env);
+		if (exp && in != 1)
+		{
+			write(lst->fd, exp, ft_strlen(exp));
+			write(lst->fd, "\n", 1);
+			free(exp);
+		}
+		else
+		{
+			write(lst->fd, tmp, ft_strlen(tmp));
+			write(lst->fd, "\n", 1);
+			free(tmp);
+		}
 	}
-	if (here->delimiter[here->idx][0] == '\n')
-		free(here->delimiter[here->idx]);
 	free(tmp);
-	while (lst->next)
-		lst = lst->next;
-	lst->infile = open("heredoc", O_RDONLY);
-	close(fd);
-	unlink("heredoc");
-	if (lst->infile < 0)
-		return (1);
 	return (0);
 }
 
-void	fake(t_heredoc *here)
+void	heredoc(t_cmd *lst, t_list *env)
 {
 	char	*tmp;
 	int		i;
 
-	i = 0;	
-	while (here->delimiter[i + 1])
+	while (lst)
 	{
-		tmp = readline("> ");
-		if (!tmp || ((ft_strncmp(tmp, here->delimiter[i], ft_strlen(here->delimiter[i])) == 0)
-				&& (ft_strlen(tmp) == ft_strlen(here->delimiter[i]))))
+		i = -1;
+		get_delim(lst);
+		while (lst->delim[++i])
+		{
+			tmp = creat_heroc(lst);
+			if (perferm_heredoc(lst, lst->in_quote, lst->delim[i], env))
+			{
+				close(lst->fd);
+				unlink(tmp);
 				break ;
-		free(tmp);
-		i++;
+			}
+			if (lst->infile != 0)
+				close(lst->infile);
+			lst->infile = open(tmp, O_RDONLY);
+			close(lst->fd);
+			unlink(tmp);
+		}
+		lst = lst->next;
 	}
 }
 
-int	is_heredoc(t_cmd *lst, t_heredoc *here)
+int	is_heredoc(t_cmd *lst)
 {
 	int	i;
+	int	res;
 
+	res = 0;
 	while (lst)
 	{
 		i = 0;
 		lst->is_heredoc = 0;
-		while (lst->argv[i])
+		while (lst->argv[i] && lst->argv[i + 1])
 		{
-			if (ft_strcmp(lst->argv[i], "<<") == 0)
+			if (!ft_strcmp(lst->argv[i], "<<") && ft_strcmp(lst->argv[i + 1], "<"))
 			{
 				lst->is_heredoc = 1;
-				here->idx = set_delim(lst, here) - 1;
-				return (1);
+				res = 1;
 			}
 			i++;
 		}
 		lst = lst->next;
 	}
-	return (0);
+	return (res);
 }

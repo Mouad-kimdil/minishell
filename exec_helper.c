@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:02:46 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/06/02 22:43:55 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/22 22:46:14 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ void	free_all(char **str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return ;
 	while (str[i])
 	{
 		free(str[i]);
@@ -105,6 +107,8 @@ char	**get_path(char **envr)
 			break ;
 		i++;
 	}
+	if (!envr[i])
+		return (NULL);
 	s = ft_split(envr[i] + 5, ':');
 	return (s);
 }

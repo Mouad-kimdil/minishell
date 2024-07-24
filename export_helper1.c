@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_helper1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:39:00 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/05/23 22:54:59 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/16 13:13:28 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	add_the_value(char *name, char *value, t_list *list)
 	{
 		if (!ft_strcmp(env->name, name))
 		{
+			free(env->value);
 			env->value = ft_strdup(value);
 			return (0);
 		}

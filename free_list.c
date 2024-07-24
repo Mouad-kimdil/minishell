@@ -1,29 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   free_list.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/16 16:50:50 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/23 01:56:15 by mkimdil          ###   ########.fr       */
+/*   Created: 2024/07/21 04:16:45 by mkimdil           #+#    #+#             */
+/*   Updated: 2024/07/21 23:59:14 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_strsearch(char *s, int c)
+void	free_list(t_env **env)
 {
-	int	i;
+	t_env	*tmp;
 
-	i = 0;
-	if (!s)
-		return (0);
-	while (i < ft_strlen(s) + 1)
+	if (!env || !(*env))
+		return ;
+	while (*env)
 	{
-		if (s[i] == (char)c)
-			return (1);
-		i++;
+		tmp = (*env)->next;
+		free((*env)->name);
+		free((*env)->value);
+		free(*env);
+		*env = tmp;
 	}
-	return (0);
+	*env = NULL;
+}
+
+void	free_list1(t_cmd **lst)
+{
+	t_cmd	*tmp;
+
+	if (!lst || !(*lst))
+		return ;
+	while (*lst)
+	{
+		tmp = (*lst)->next;
+		free_arr((*lst)->argv);
+		free((*lst)->cmd);
+		free_arr((*lst)->delim);
+		free(*lst);
+		*lst = tmp;
+	}
+	*lst = NULL;
 }

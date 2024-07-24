@@ -6,100 +6,134 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 04:01:04 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/06/02 21:56:39 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/24 02:40:15 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	remove_qoutes(t_cmd **lst)
+int	g_signal_status;
+
+void	print_args(t_cmd *lst)
+{
+	int	x = 0;
+
+	while (lst)
+	{
+		printf("lst %d :\n", x);
+		int	i = 0;
+		while (lst->argv[i])
+		{
+			printf("lst->argv[%d]: %s\n", i, lst->argv[i]);
+			i++;
+		}
+		lst = lst->next;
+		x++;
+	}
+	printf("\n");
+}
+
+void	free_cmd_lst(t_cmd *lst)
 {
 	t_cmd	*current;
-	char	**argv;
-	char	*arg;
-	int		len;
-	int		i;
-	int		j;
+	t_cmd	*next;
 
-	current = *lst;
-	while (current != NULL)
+	current = lst;
+	while (current)
 	{
-		argv = current->argv;
-		while (*argv != NULL)
-		{
-			arg = *argv;
-			len = ft_strlen(arg);
-			i = 0;
-			j = 0;
-			while (i < len)
-			{
-				if (arg[i] != '"' && arg[i] != '\'')
-					arg[j++] = arg[i];
-				i++;
-			}
-			arg[j] = '\0';
-			argv++;
-		}
-		current = current->next;
+		next = current->next;
+		free(current->cmd);
+		free_all(current->argv);
+		free(current);
+		current = next;
 	}
 }
 
-void	function_sigint(int sig)
+void    handling_shlvl(t_list *list)
 {
-	if (sig == SIGINT && g_signal_status == 0)
+    char    *shl_lvl;
+    char    *lvl;
+
+    shl_lvl = my_getenv("SHLVL", list);
+    if (!shl_lvl)
+        update_env("SHLVL", "1", list);
+    else if (ft_atoi(shl_lvl) > 999)
+    {
+        printf("Minishell: warning: shell level ");
+        printf("(%d) too high, resetting to 1\n", ft_atoi(shl_lvl));
+        update_env("SHLVL", "1", list);
+    }
+    else if (ft_atoi(shl_lvl) < 0)
+        update_env("SHLVL", "0", list);
+    else if (ft_atoi(shl_lvl) == 999)
+        update_env("SHLVL", "", list);
+    else
+    {
+        lvl = ft_itoa(ft_atoi(shl_lvl) + 1);
+        if(!lvl)
+            exit(EXIT_FAILURE);
+        add_the_value("SHLVL", lvl, list);
+        free(lvl);
+    }
+}
+
+void	free_list(t_list *list)
+{
+	t_env	*current;
+	t_env	*next;
+
+	current = list->envs;
+	while (current)
 	{
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
+		next = current->next;
+		free(current->name);
+		free(current->value);
+		free(current);
+		current = next;
 	}
-	else if (sig == SIGINT && g_signal_status == 1)
-		write(1, "\n", 1);
+	free(list);
 }
 
-void	function_sigwuit(int sig)
+int	main(int ac, char **av, char **env)
 {
-	if (sig == SIGQUIT && g_signal_status ==1)
-		write(1, "Quit: 3\n", 8);
-}
+	char			*temp;
+	t_cmd			*lst;
+	t_list			*list;
+	char			*str;
+	char			**res;
+	struct termios	copy;
 
-void	check_signals()
-{
-	signal(SIGINT, function_sigint);
-	signal(SIGQUIT, function_sigwuit);
-}
-
-int main(int ac, char **av, char **env)
-{
 	(void)av;
-	char		*temp;
-	t_heredoc	*here;
-	t_cmd		*lst;
-	t_list		*list;
-	char		*str;
-	char		**res;
-
 	g_signal_status = 0;
-	here = malloc(sizeof(t_heredoc));
 	lst = malloc(sizeof(t_cmd));
 	list = malloc(sizeof(t_list));
-	list->envs = env_init(env);
 	if (ac != 1 || !lst || !list)
 		return (1);
+	list->envs = env_init(env);
+	handling_shlvl(list);
 	while (1)
 	{
 		rl_catch_signals = 0;
 		check_signals();
-		temp = readline("Mouad_shell-$ ");
-		if (!temp)
+		temp = readline("Minishell-$ ");
+		if (!temp || !isatty(0))
 		{
 			printf("exit\n");
 			break ;
 		}
 		add_history(temp);
-		if (syn_error(temp))
+		if (!ft_strlen(temp) || is_blank(temp))
+		{
+			ex_st(0, 1);
+			free(temp);
 			continue ;
+		}
 		str = add_space(temp);
+		if (syn_error(str))
+		{
+			free(temp), free(str), ex_st(258, 1);
+			continue ;
+		}
 		if (!str)
 			continue ;
 		change_to_garb(str);
@@ -112,14 +146,19 @@ int main(int ac, char **av, char **env)
 		if (!lst)
 			continue ;
 		back_to_ascii(lst);
+		if (is_heredoc(lst))
+			heredoc(lst, list);
 		expand(lst, list);
 		remove_qoutes(&lst);
 		g_signal_status = 1;
-		if (is_heredoc(lst, here))
-			if (heredoc(lst, here))
-				continue ;
-			printf("%d\n", lst->outfile);
+		tcgetattr(0, &copy);
 		execution(lst, list);
+		tcsetattr(0, 0, &copy);
 		g_signal_status = 0;
+		free_cmd_lst(lst);
+		free(str);
+		free(temp);
+		free_all(res);
 	}
+	free_list(list);
 }
