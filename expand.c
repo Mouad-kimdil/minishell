@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 18:16:45 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/24 03:43:23 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/24 04:40:33 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,9 @@ void	expand(t_cmd *lst, t_list *envp)
 	int		j;
 	int		k;
 	int		tr;
-    int		argv_size;
-    char	*expanded;
-    char	**splited;
+	int		argv_size;
+	char	*expanded;
+	char	**splited;
 	char	*tmp;
 
 	tr = 0;
