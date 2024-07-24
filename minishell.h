@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/24 03:52:05 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/24 04:29:41 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,16 @@
 # define BUFFER_SIZE 33
 
 extern int	g_signal_status;
+
+typedef	struct s_hexp
+{
+	int		tr;
+	int		k;
+	int		argv_size;
+	char	**splited;
+	char	*expanded;
+	char	*tmp;
+}	t_hexp;
 
 typedef struct s_expand
 {
