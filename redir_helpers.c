@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_helpers.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:09:26 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/16 14:10:05 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/24 03:52:13 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,22 @@ void	new_array(t_cmd *node, int *index, int j)
 	*index -= 1;
 }
 
-int	checking_ambigious(t_cmd *node, int *index)
+int		is_rdr(char *arg)
+{
+	if (ft_strchr(arg, '>') || ft_strnstr(arg, ">>"))
+		return (1);
+	return (0);
+}
+
+int	checking_ambigious(t_cmd *node)
 {
 	t_cmd	*tmp;
 	int		o;
 
 	o = 0;
 	tmp = node;
-	if (!ft_strlen(node->argv[*index + 1]))
+	printf("lst->ambiguous: %d\n", node->ambiguous);
+	if (node->ambiguous == 1)
 	{
 		write(2, "ambiguous redirect\n", 19);
 		while (tmp->argv[o])

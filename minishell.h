@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/16 20:04:59 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/24 03:52:05 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <string.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -30,7 +31,31 @@
 # define NC  "\033[0m"
 # define BUFFER_SIZE 33
 
-int	g_signal_status;
+extern int	g_signal_status;
+
+typedef struct s_expand
+{
+	char	*cmd;
+	char	*current;
+	char	*var_name;
+	char	*value;
+}	t_expand;
+
+typedef struct s_help
+{
+	char	*exp;
+	char	*name;
+	char	*end;
+	char	*start;
+	char	*dollar;
+	char	*var_value;
+}	t_help;
+
+typedef struct s_exp
+{
+	char			**splited;
+	struct s_exp	*next;
+}	t_exp;
 
 typedef struct s_env
 {
@@ -53,7 +78,9 @@ typedef struct s_cmd
 	int				fd;
 	int				infile;
 	int				outfile;
+	int				in_quote;
 	int				is_heredoc;
+	int				ambiguous;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -65,21 +92,15 @@ typedef struct s_execute
 	int	fd_out;
 }			t_execute;
 
-typedef struct s_help
-{
-	char	*exp;
-	char	*name;
-	char	*end;
-	char	*start;
-	char	*dollar;
-	char	*var_value;
-}				t_help;
-
 typedef struct s_gc
 {
 	void		*ptr;
 	struct s_gc	*next;
 }	t_gc;
+
+//dw
+void	print_args(t_cmd *lst);
+//dw
 
 char	**ft_split(char *s, char c);
 char	**ft_help(char *s, char c, int len, char **final);
@@ -107,9 +128,10 @@ int		unset(char **argv, t_env **envps);
 void	pwd(char **args, t_list *list, int outfile);
 void	export(char **argv, t_list *list, int outfile);
 int		syn_error(char *line);
-int		syn_error2(char **res);
-int		syn_error3(char **res);
-void	free_array(char **arr);
+int		syn_err_chars(int c);
+int		last_check(int c);
+int		is_red(int c);
+int		double_red(char *s);
 char	*add_space(char *line);
 void	second_case(char *str, char *line, int *i, int *j);
 int		count_num_of_special(char *line);
@@ -130,12 +152,11 @@ int		check_if_flag(char *argv);
 char	**env_split(char *s, char c);
 char	*my_getenv(char *name, t_list *list);
 void	update_env(char *name, char *value, t_list *list);
-void	update_pwd(char *path, t_list *list);
+void	update_pwd(t_list *list);
 t_env	*ft_lstnew(char *name, char *value);
 void	ft_lstadd_back(t_env **lst, t_env *new);
 int		special_case(char c);
 char	*ft_substr(char *s, int start, int len);
-char	*expand_cmd(t_cmd *lst, t_list *envp, int i);
 int		ft_strcmp(char *s1, char *s2);
 char	*ft_substr(char *s, int start, int len);
 char	*ft_itoa(int nb);
@@ -165,19 +186,16 @@ int		update_the_value(char *name, char *value, t_list *list);
 int		add_the_value(char *name, char *value, t_list *list);
 void	add_env(t_env **env, char *name, char *value);
 void	remove_qoutes(t_cmd **lst);
-int		check_end(char *line);
-char	**handle_expand(t_cmd *lst);
 int		is_heredoc(t_cmd *lst);
-void	heredoc(t_cmd *lst);
+void	heredoc(t_cmd *lst, t_list *env);
 char	*creat_heroc(t_cmd *lst);
-void	perferm_heredoc(t_cmd *lst, char *delim);
+int		perferm_heredoc(t_cmd *lst, int in, char *delim, t_list *env);
 void	her_sin(int sig);
 void	get_delim(t_cmd *lst);
 int		get_delim_size(t_cmd *lst);
 int		ex_st(int status, int mode);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_putchar_fd(char c, int fd);
-char	*expand_variables(char *input);
 char	*ft_strcat(char *dest, char *src);
 char	*ft_strncpy(char *dest, char *src, unsigned int n);
 int		ft_isalnum(int c);
@@ -186,7 +204,7 @@ void	build_arr_help(t_cmd **lst, char *res);
 int		split_stlen(char **str);
 int		checking_error(t_cmd *node, int index);
 void	new_array(t_cmd *node, int *index, int j);
-int		checking_ambigious(t_cmd *node, int *index);
+int		checking_ambigious(t_cmd *node);
 int		split_stlen(char **str);
 int		checking_error(t_cmd *node, int index);
 int		is_builtin(t_cmd *cmd, t_list *list);
@@ -201,7 +219,24 @@ void	function_sigwuit(int sig);
 void	check_signals(void);
 void	remove_qoutes(t_cmd **lst);
 int		count_argv(t_cmd *node);
-void	handling_my_argv(t_cmd *node);
 int		ft_isspace(char str);
 int		is_blank(char *str);
+int		check_line(char **res);
+void	ft_add_back(t_exp **lst, t_exp *new);
+t_exp	*last_node(t_exp *lst);
+t_exp	*ft_new_node(char *str);
+char	*unquote(char* input);
+int		count_double(char *input);
+int		count_single(char *input);
+void	ft_putstr_fd(char *s, int fd);
+char	*expand_here_cmd(char *temp, t_list *envp);
+char	*expand_heredoc(char *temp, t_list *envp);
+char	*get_env_value(char *var_name, t_env *env);
+char	*handle_other_cases(char *current, char *cmd, int *j);
+char	*handle_dollar_sign(char *current, char *cmd, int *j, t_list *envp);
+char	*expand_cmd(t_cmd *lst, t_list *envp, int i);
+void	handle_single_quote(t_expand *exp, int *j);
+void	handle_double_quote(t_expand *exp, int *j, int *k, t_list *envp);
+void	handle_special_case(t_expand *exp, int *j, int *k, t_list *envp);
+
 #endif

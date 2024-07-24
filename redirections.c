@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 15:12:05 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/16 14:11:43 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/24 03:52:17 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,18 @@ int	redirect_out_append(t_cmd *node, int *index, int flags)
 {
 	int		j;
 
-	if (checking_ambigious(node, index) == 1)
+	if (checking_ambigious(node) == 1)
 		return (1);
 	if (node->argv[*index + 1])
 	{
 		if (node->outfile != 1)
 			close(node->outfile);
-		if (checking_error(node, *index + 1))
-		{
-			new_array(node, index, *index);
-			ex_st(1, 1);
-			return (1);
-		}
+		// if (checking_error(node, *index + 1))
+		// {
+		// 	new_array(node, index, *index);
+		// 	ex_st(1, 1);
+		// 	return (1);
+		// }
 		node->outfile = open(node->argv[*index + 1], flags, 0644);
 		if (node->outfile == -1)
 		{
@@ -45,18 +45,18 @@ int	redirect_in(t_cmd *node, int *index, int flags)
 {
 	int		j;
 
-	if (checking_ambigious(node, index) == 1)
+	if (checking_ambigious(node) == 1)
 		return (1);
 	if (node->argv[*index + 1])
 	{
 		if (node->infile != 0)
 			close(node->infile);
-		if (checking_error(node, *index + 1))
-		{
-			new_array(node, index, *index);
-			ex_st(1, 1);
-			return (1);
-		}
+		// if (checking_error(node, *index + 1))
+		// {
+		// 	new_array(node, index, *index);
+		// 	ex_st(1, 1);
+		// 	return (1);
+		// }
 		node->infile = open(node->argv[*index + 1], flags);
 		if (node->infile == -1)
 		{
@@ -73,18 +73,18 @@ int	redirect_out(t_cmd *node, int *index, int flags)
 {
 	int		j;
 
-	if (checking_ambigious(node, index) == 1)
+	if (checking_ambigious(node) == 1)
 		return (1);
 	if (node->argv[*index + 1])
 	{
 		if (node->outfile != 1)
 			close(node->outfile);
-		if (checking_error(node, *index + 1))
-		{
-			new_array(node, index, *index);
-			ex_st(1, 1);
-			return (1);
-		}
+		// if (checking_error(node, *index + 1))
+		// {
+		// 	new_array(node, index, *index);
+		// 	ex_st(1, 1);
+		// 	return (1);
+		// }
 		node->outfile = open(node->argv[*index + 1], flags, 0644);
 		if (node->outfile == -1)
 		{

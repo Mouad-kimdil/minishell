@@ -35,7 +35,6 @@ char	**env_split(char *s, char c)
 {
 	char	**result;
 	int		i;
-	int		j;
 
 	if (!s)
 		return (NULL);
@@ -43,7 +42,6 @@ char	**env_split(char *s, char c)
 	if (!result)
 		return (NULL);
 	i = 0;
-	j = 0;
 	while (s[i] && s[i] != c)
 		i++;
 	result[0] = malloc(sizeof(char) * (i + 1));

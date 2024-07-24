@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 18:16:45 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/16 19:43:37 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/24 03:43:23 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,105 +28,156 @@ char	*get_env_value(char *var_name, t_env *env)
 	return ("");
 }
 
+void	handle_single_quote(t_expand *exp, int *j)
+{
+	(*j)++;
+	while (exp->current[*j] && exp->current[*j] != '\'')
+	{
+		exp->cmd = ft_strjoin(exp->cmd, ft_substr(exp->current, *j, 1));
+		(*j)++;
+	}
+	if (exp->current[*j] == '\'')
+		(*j)++;
+}
+
+void	handle_double_quote(t_expand *exp, int *j, int *k, t_list *envp)
+{
+	(*j)++;
+	while (exp->current[*j] && exp->current[*j] != '"')
+	{
+		if (exp->current[*j] == '$' && special_case(exp->current[(*j) + 1]))
+		{
+			(*j)++;
+			*k = *j;
+			while (exp->current[*j] && special_case(exp->current[*j]))
+				(*j)++;
+			exp->var_name = ft_substr(exp->current, *k, *j - *k);
+			exp->value = get_env_value(exp->var_name, envp->envs);
+			exp->cmd = ft_strjoin(exp->cmd, exp->value);
+			free(exp->var_name);
+		}
+		else
+		{
+			exp->cmd = ft_strjoin(exp->cmd, ft_substr(exp->current, *j, 1));
+			(*j)++;
+		}
+	}
+	if (exp->current[*j] == '"')
+		(*j)++;
+}
+
+void	handle_special_case(t_expand *exp, int *j, int *k, t_list *envp)
+{
+	(*j)++;
+	*k = *j;
+	while (exp->current[*j] && special_case(exp->current[*j]))
+		(*j)++;
+	exp->var_name = ft_substr(exp->current, *k, *j - *k);
+	exp->value = get_env_value(exp->var_name, envp->envs);
+	exp->cmd = ft_strjoin(exp->cmd, exp->value);
+	free(exp->var_name);
+}
+
 char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 {
-	char	*cmd;
-	char	*current;
-	char	*var_name;
-	char	*value;
+	t_expand	exp;
 	int		j;
 	int		k;
 
-	cmd = ft_strdup("");
-	current = lst->argv[i];
-	j = 0;
-	while (current[j])
+	exp.cmd = ft_strdup("");
+	exp.current = lst->argv[i];
+	j = 0, k = 0;
+	while (exp.current[j])
 	{
-		if (current[j] == '$' && current[j + 1] == '?')
+		if (exp.current[j] == '$' && exp.current[j + 1] == '?')
 			j++;
-		else if (current[j] == '\'')
-		{
-			j++;
-			while (current[j] && current[j] != '\'')
-			{
-				cmd = ft_strjoin(cmd, ft_substr(current, j, 1));
-				j++;
-			}
-			if (current[j] == '\'')
-				j++;
-		}
-		else if (current[j] == '"')
-		{
-			j++;
-			while (current[j] && current[j] != '"')
-			{
-				if (current[j] == '$' && special_case(current[j + 1]))
-				{
-					j++;
-					k = j;
-					while (current[j] && special_case(current[j]))
-						j++;
-					var_name = ft_substr(current, k, j - k);
-					value = get_env_value(var_name, envp->envs);
-					cmd = ft_strjoin(cmd, value);
-					free(var_name);
-				}
-				else
-				{
-					cmd = ft_strjoin(cmd, ft_substr(current, j, 1));
-					j++;
-				}
-			}
-			if (current[j] == '"')
-				j++;
-		}
-		else if (current[j] == '$' && special_case(current[j + 1]))
-		{
-			j++;
-			k = j;
-			while (current[j] && special_case(current[j]))
-				j++;
-			var_name = ft_substr(current, k, j - k);
-			value = get_env_value(var_name, envp->envs);
-			cmd = ft_strjoin(cmd, value);
-			free(var_name);
-		}
-		else if (current[j] == '$' && current[j + 1] == '$')
+		else if (exp.current[j] == '\'')
+			handle_single_quote(&exp, &j);
+		else if (exp.current[j] == '"')
+			handle_double_quote(&exp, &j, &k, envp);
+		else if (exp.current[j] == '$' && special_case(exp.current[j + 1]))
+			handle_special_case(&exp, &j, &k, envp);
+		else if (exp.current[j] == '$' && exp.current[j + 1] == '$')
 			j += 2;
-		else if (current[j] == '$' && current[j + 1] == '"')
+		else if (exp.current[j] == '$' && exp.current[j + 1] == '"')
 			j++;
 		else
-		{
-			cmd = ft_strjoin(cmd, ft_substr(current, j, 1));
-			j++;
-		}
+			exp.cmd = ft_strjoin(exp.cmd, ft_substr(exp.current, j, 1)), j++;
 	}
-	return (cmd);
-}
-
-char	**handle_expand(t_cmd *lst)
-{
-	char	**str;
-
-	str = ft_split(lst->argv[0], ' ');
-	return (str);
+	return (exp.cmd);
 }
 
 void	expand(t_cmd *lst, t_list *envp)
 {
 	int		i;
+	int		j;
+	int		k;
+	int		tr;
+    int		argv_size;
+    char	*expanded;
+    char	**splited;
+	char	*tmp;
 
+	tr = 0;
+	tmp = NULL;
 	while (lst)
 	{
 		i = 0;
 		while (lst->argv[i])
 		{
+			if (ft_strchr(lst->argv[i], '$') && lst->argv[i + 1]
+				&& !ft_strchr(lst->argv[i + 1], '$'))
+				tmp = lst->argv[i + 1];
 			if (ft_strchr(lst->argv[i], '$'))
-				lst->argv[i] = expand_cmd(lst, envp, i);
+			{
+				if (ft_strsearch(lst->argv[i], '"'))
+					tr = 1;
+				if (ft_strsearch(lst->argv[i], '\''))
+					tr = 2;
+				if (tr == 1 || tr == 0)
+				{
+					expanded = expand_cmd(lst, envp, i);
+					if (ft_strsearch(expanded, ' ') && tr == 0)
+					{
+						lst->ambiguous = 1;
+						splited = ft_split(expanded, ' ');
+						argv_size = 0;
+						while (lst->argv[argv_size])
+							argv_size++;
+						j = 0;
+						while (splited[j])
+							j++;
+						k = argv_size;
+						while (k >= i)
+						{
+							lst->argv[k + j - 1] = lst->argv[k];
+							k--;
+						}
+						j = 0;
+						k = i;
+						while (splited[j])
+						{
+							lst->argv[k] = ft_strdup(splited[j]);
+							k++;
+							j++;
+						}
+					}
+					else
+					{
+						lst->argv[i] = ft_strdup(expanded);
+						if (ft_strlen(expanded) == 0 && lst->ambiguous == 0)
+						{
+							if (tr != 1 && tr != 2)
+								lst->ambiguous = 1;
+							lst->argv[i] = NULL;
+						}
+					}
+				}
+			}
+			if (tmp && !lst->argv[i])
+				lst->argv[i] = ft_strdup(tmp);
 			i++;
 		}
-		if (ft_strchr(lst->argv[0], ' '))
-			lst->argv = handle_expand(lst);
 		lst = lst->next;
 	}
 }

@@ -3,14 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   Minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 04:01:04 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/16 21:20:02 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/24 03:52:01 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_signal_status;
+
+void	print_args(t_cmd *lst)
+{
+	int	x = 0;
+
+	while (lst)
+	{
+		printf("lst %d :\n", x);
+		int	i = 0;
+		while (lst->argv[i])
+		{
+			printf("lst->argv[%d]: %s\n", i, lst->argv[i]);
+			i++;
+		}
+		lst = lst->next;
+		x++;
+	}
+	printf("\n");
+}
 
 void	free_cmd_lst(t_cmd *lst)
 {
@@ -26,6 +47,34 @@ void	free_cmd_lst(t_cmd *lst)
 		free(current);
 		current = next;
 	}
+}
+
+void    handling_shlvl(t_list *list)
+{
+    char    *shl_lvl;
+    char    *lvl;
+
+    shl_lvl = my_getenv("SHLVL", list);
+    if (!shl_lvl)
+        update_env("SHLVL", "1", list);
+    else if (ft_atoi(shl_lvl) > 999)
+    {
+        printf("Minishell: warning: shell level ");
+        printf("(%d) too high, resetting to 1\n", ft_atoi(shl_lvl));
+        update_env("SHLVL", "1", list);
+    }
+    else if (ft_atoi(shl_lvl) < 0)
+        update_env("SHLVL", "0", list);
+    else if (ft_atoi(shl_lvl) == 999)
+        update_env("SHLVL", "", list);
+    else
+    {
+        lvl = ft_itoa(ft_atoi(shl_lvl) + 1);
+        if(!lvl)
+            exit(EXIT_FAILURE);
+        add_the_value("SHLVL", lvl, list);
+        free(lvl);
+    }
 }
 
 void	free_list(t_list *list)
@@ -61,6 +110,7 @@ int	main(int ac, char **av, char **env)
 	if (ac != 1 || !lst || !list)
 		return (1);
 	list->envs = env_init(env);
+	handling_shlvl(list);
 	while (1)
 	{
 		rl_catch_signals = 0;
@@ -78,13 +128,12 @@ int	main(int ac, char **av, char **env)
 			free(temp);
 			continue ;
 		}
-		if (syn_error(temp))
+		str = add_space(temp);
+		if (syn_error(str))
 		{
-			ex_st(258, 1);
-			free(temp);
+			free(temp), free(str), ex_st(258, 1);
 			continue ;
 		}
-		str = add_space(temp);
 		if (!str)
 			continue ;
 		change_to_garb(str);
@@ -97,17 +146,15 @@ int	main(int ac, char **av, char **env)
 		if (!lst)
 			continue ;
 		back_to_ascii(lst);
+		if (is_heredoc(lst))
+			heredoc(lst, list);
 		expand(lst, list);
 		remove_qoutes(&lst);
 		g_signal_status = 1;
-		if (is_heredoc(lst))
-			heredoc(lst);
-		handling_my_argv(lst);
 		tcgetattr(0, &copy);
 		execution(lst, list);
 		tcsetattr(0, 0, &copy);
 		g_signal_status = 0;
-		// printf("last exit status is %d\n", ex_st(0, 0));
 		free_cmd_lst(lst);
 		free(str);
 		free(temp);
