@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:25:47 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/19 03:19:57 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/25 02:38:52 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,39 +59,4 @@ int	env_size(t_env *env)
 		env = env->next;
 	}
 	return (i);
-}
-
-t_exp	*ft_new_node(char *str)
-{
-	t_exp	*new;
-
-	new = malloc(sizeof(t_exp));
-	if (new)
-	{
-		new->splited = ft_split(str, ' ');
-		new->next = NULL;
-	}
-	return (new);
-}
-
-t_exp	*last_node(t_exp *lst)
-{
-	if (!lst)
-		return (NULL);
-	while (lst->next != NULL)
-		lst = lst->next;
-	return (lst);
-}
-
-void	ft_add_back(t_exp **lst, t_exp *new)
-{
-	t_exp	*last;
-
-	if (*lst == NULL)
-		*lst = new;
-	else
-	{
-		last = last_node(*lst);
-		last->next = new;
-	}
 }

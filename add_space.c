@@ -61,7 +61,7 @@ char	*add_space(char *line)
 	j = 0;
 	str = malloc(ft_strlen(line) + count_num_of_special(line) * 2 + 1);
 	if (!str)
-		return (NULL);
+		return (free(line), NULL);
 	while (line[i])
 	{
 		if ((line[i] == '<' && line[i + 1] == '<')

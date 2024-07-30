@@ -6,11 +6,45 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:24:10 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/20 22:26:35 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/25 02:34:41 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	her_sin(int sig)
+{
+	if (sig == SIGINT)
+	{
+		close(0);
+		ex_st(1, 1);
+	}
+}
+
+int	is_heredoc(t_cmd *lst)
+{
+	int	i;
+	int	res;
+
+	res = 0;
+	while (lst)
+	{
+		i = 0;
+		lst->is_heredoc = 0;
+		while (lst->argv[i] && lst->argv[i + 1])
+		{
+			if (!ft_strcmp(lst->argv[i], "<<")
+				&& ft_strcmp(lst->argv[i + 1], "<"))
+			{
+				lst->is_heredoc = 1;
+				res = 1;
+			}
+			i++;
+		}
+		lst = lst->next;
+	}
+	return (res);
+}
 
 int	get_delim_size(t_cmd *lst)
 {
@@ -28,22 +62,6 @@ int	get_delim_size(t_cmd *lst)
 			i++;
 		}
 		lst = lst->next;
-	}
-	return (count);
-}
-
-int	count_argv(t_cmd *node)
-{
-	int		i;
-	int		count;
-
-	i = 0;
-	count = 0;
-	while (node->argv[i] != NULL)
-	{
-		if (ft_strlen(node->argv[i]) > 0)
-			count++;
-		i++;
 	}
 	return (count);
 }

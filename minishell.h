@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/24 04:29:41 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/30 01:06:10 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,40 +26,22 @@
 # include <readline/history.h>
 # include <termios.h>
 # include <fcntl.h>
+# include <errno.h>
 
-# define GREEN  "\033[0;34m"
-# define NC  "\033[0m"
 # define BUFFER_SIZE 33
 
 extern int	g_signal_status;
 
-typedef	struct s_hexp
-{
-	int		tr;
-	int		k;
-	int		argv_size;
-	char	**splited;
-	char	*expanded;
-	char	*tmp;
-}	t_hexp;
-
 typedef struct s_expand
 {
+	int		len;
+	int		in_single_quote;
+	int		in_double_quote;
 	char	*cmd;
 	char	*current;
-	char	*var_name;
+	char	*name;
 	char	*value;
 }	t_expand;
-
-typedef struct s_help
-{
-	char	*exp;
-	char	*name;
-	char	*end;
-	char	*start;
-	char	*dollar;
-	char	*var_value;
-}	t_help;
 
 typedef struct s_exp
 {
@@ -101,12 +83,6 @@ typedef struct s_execute
 	int	fd_int;
 	int	fd_out;
 }			t_execute;
-
-typedef struct s_gc
-{
-	void		*ptr;
-	struct s_gc	*next;
-}	t_gc;
 
 //dw
 void	print_args(t_cmd *lst);
@@ -153,7 +129,6 @@ int		ft_strcpy(char *dest, char *src);
 t_cmd	*new_list(void *cmd);
 void	back_to_ascii(t_cmd *lst);
 char	*nops_strdup(char *str);
-void	expand(t_cmd *lst, t_list *envp);
 void	execution(t_cmd *node, t_list *list);
 void	home_function(char *home, t_list *list);
 void	old_pwd_function(char *home, t_list *list);
@@ -165,7 +140,6 @@ void	update_env(char *name, char *value, t_list *list);
 void	update_pwd(t_list *list);
 t_env	*ft_lstnew(char *name, char *value);
 void	ft_lstadd_back(t_env **lst, t_env *new);
-int		special_case(char c);
 char	*ft_substr(char *s, int start, int len);
 int		ft_strcmp(char *s1, char *s2);
 char	*ft_substr(char *s, int start, int len);
@@ -187,6 +161,7 @@ void	env_to_char_array_helper(t_env *current, char **envp);
 char	**env_to_char_array(t_env *head);
 void	error_open(char *str);
 void	free_all(char **str);
+void	free_cmd_lst(t_cmd **lst);
 char	*command(char *my_argv, char **envr);
 int		env_size(t_env *env);
 char	*get_name(char *str);
@@ -199,6 +174,7 @@ void	remove_qoutes(t_cmd **lst);
 int		is_heredoc(t_cmd *lst);
 void	heredoc(t_cmd *lst, t_list *env);
 char	*creat_heroc(t_cmd *lst);
+void	perferm_heredoc_help(int fd, char *exp, int in);
 int		perferm_heredoc(t_cmd *lst, int in, char *delim, t_list *env);
 void	her_sin(int sig);
 void	get_delim(t_cmd *lst);
@@ -210,7 +186,6 @@ char	*ft_strcat(char *dest, char *src);
 char	*ft_strncpy(char *dest, char *src, unsigned int n);
 int		ft_isalnum(int c);
 char	*ft_strncat(char *dest, char *src, unsigned int nb);
-void	build_arr_help(t_cmd **lst, char *res);
 int		split_stlen(char **str);
 int		checking_error(t_cmd *node, int index);
 void	new_array(t_cmd *node, int *index, int j);
@@ -228,25 +203,46 @@ void	function_sigint(int sig);
 void	function_sigwuit(int sig);
 void	check_signals(void);
 void	remove_qoutes(t_cmd **lst);
-int		count_argv(t_cmd *node);
 int		ft_isspace(char str);
 int		is_blank(char *str);
 int		check_line(char **res);
 void	ft_add_back(t_exp **lst, t_exp *new);
 t_exp	*last_node(t_exp *lst);
 t_exp	*ft_new_node(char *str);
-char	*unquote(char* input);
+char	*unquote(char *input);
 int		count_double(char *input);
 int		count_single(char *input);
 void	ft_putstr_fd(char *s, int fd);
+char	*handle_dollar_sign(char *curr, char *cmd, int *j, t_list *envp);
+char	*handle_other_cases(char *curr, char *cmd, int *j);
 char	*expand_here_cmd(char *temp, t_list *envp);
 char	*expand_heredoc(char *temp, t_list *envp);
-char	*get_env_value(char *var_name, t_env *env);
-char	*handle_other_cases(char *current, char *cmd, int *j);
-char	*handle_dollar_sign(char *current, char *cmd, int *j, t_list *envp);
-char	*expand_cmd(t_cmd *lst, t_list *envp, int i);
-void	handle_single_quote(t_expand *exp, int *j);
-void	handle_double_quote(t_expand *exp, int *j, int *k, t_list *envp);
+char	*get_env_value(char *name, t_env *env);
+int		special_case(char c);
+void	expand_with_space(t_cmd *lst, char *expanded);
+void	expand_without_space(t_cmd *lst, int *tr, int *i, char *expanded);
+void	expand_helper(t_cmd *lst, t_list *envp, int *i, int *tr);
 void	handle_special_case(t_expand *exp, int *j, int *k, t_list *envp);
+char	*expand_cmd(t_cmd *lst, t_list *envp, int i);
+void	expand(t_cmd *lst, t_list *envp);
+void	add_back(t_cmd **lst, t_cmd *new);
+t_cmd	*get_last(t_cmd *lst);
+t_cmd	*ft_new(char *cmd);
+void	remove_qoutes(t_cmd **lst);
+void	process_argv(char **argv, int in);
+void	remove_quotes_from_arg(char *arg, int in);
+void	remove_quotes_from_arg_helper(char	*arg, char qoutes, int *tr);
+void	free_list(t_list *list);
+int		args_len(char **arg);
+char	**join_args(char **s1, char *expanded);
+char	**join_args_help(char **s1, char **splited, char **res, int i);
+int		special_case(char c);
+void	free_env(char *name, t_env **envps);
+void	free_exp(t_expand *exp);
+char	**ft_split_2(char *s);
+char	**ft_help_2(char *s, int len, char **final);
+int		countword_2(char *s);
+int		is_whitespace(int c);
+char	*duplicate(char *str);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_helper.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:02:46 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/22 22:46:14 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/29 20:08:34 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ char	*command(char *my_argv, char **envr)
 	if (!envr)
 		return (NULL);
 	path = get_path(envr);
+	if (!path)
+		return (NULL);
 	i = 0;
 	while (path[i])
 	{
@@ -84,15 +86,17 @@ void	free_all(char **str)
 {
 	int	i;
 
-	i = 0;
 	if (!str)
 		return ;
+	i = 0;
 	while (str[i])
 	{
 		free(str[i]);
 		i++;
 	}
-	free(str);
+	if(str)
+		free(str);
+	str = NULL;
 }
 
 char	**get_path(char **envr)

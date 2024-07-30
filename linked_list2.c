@@ -1,37 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   linked_list2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/16 17:25:50 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/30 00:37:38 by mkimdil          ###   ########.fr       */
+/*   Created: 2024/07/25 02:39:06 by mkimdil           #+#    #+#             */
+/*   Updated: 2024/07/29 04:23:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	function_sigint(int sig)
+t_exp	*ft_new_node(char *str)
 {
-	if (sig == SIGINT && g_signal_status == 0)
+	t_exp	*new;
+
+	new = malloc(sizeof(t_exp));
+	if (new)
 	{
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-		ex_st(1, 1);
+		new->splited = ft_split_2(str);
+		new->next = NULL;
 	}
+	return (new);
 }
 
-void	function_sigwuit(int sig)
+t_exp	*last_node(t_exp *lst)
 {
-	if (sig == SIGQUIT && g_signal_status == 1)
-		write(1, "Quit: 3\n", 8);
+	if (!lst)
+		return (NULL);
+	while (lst->next != NULL)
+		lst = lst->next;
+	return (lst);
 }
 
-void	check_signals(void)
+void	ft_add_back(t_exp **lst, t_exp *new)
 {
-	signal(SIGINT, function_sigint);
-	signal(SIGQUIT, function_sigwuit);
+	t_exp	*last;
+
+	if (*lst == NULL)
+		*lst = new;
+	else
+	{
+		last = last_node(*lst);
+		last->next = new;
+	}
 }

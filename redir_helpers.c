@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:09:26 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/24 02:52:51 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/29 04:24:26 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,18 @@
 
 void	new_array(t_cmd *node, int *index, int j)
 {
-	while (node->argv[j])
+	free(node->argv[j]);
+	free(node->argv[j + 1]);
+	while (node->argv[j + 2])
 	{
-		if (!node->argv[j + 2])
-		{
-			node->argv[j] = NULL;
-			break ;
-		}
-		else
-			node->argv[j] = node->argv[j + 2];
+		node->argv[j] = node->argv[j + 2];
 		j++;
 	}
+	node->argv[j] = NULL;
 	*index -= 1;
 }
 
-int		is_rdr(char *arg)
+int	is_rdr(char *arg)
 {
 	if (ft_strchr(arg, '>') || ft_strnstr(arg, ">>"))
 		return (1);
@@ -42,7 +39,6 @@ int	checking_ambigious(t_cmd *node)
 
 	o = 0;
 	tmp = node;
-	printf("lst->ambiguous: %d\n", node->ambiguous);
 	if (node->ambiguous == 1)
 	{
 		write(2, "ambiguous redirect\n", 19);
@@ -74,7 +70,7 @@ int	checking_error(t_cmd *node, int index)
 {
 	char	**str;
 
-	str = ft_split(node->argv[index], ' ');
+	str = ft_split_2(node->argv[index]);
 	if (split_stlen(str) > 1)
 	{
 		ex_st(1, 1);
