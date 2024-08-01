@@ -35,7 +35,7 @@ char	**join_args_help(char **s1, char **splited, char **res, int i)
 		i++;
 	}
 	res[k] = NULL;
-	return (free_all(splited), res);
+	return (free_all(s1), free_all(splited), res);
 }
 
 char	**join_args(char **s1, char *expanded)

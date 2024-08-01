@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 10:59:50 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/29 20:35:51 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/01 04:57:00 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	my_execve(t_cmd *node, char **envr)
 			ex_st(126, 1);
 			exit(126);
 		}
+		f_cmd(&node);
 	}
 }
 
@@ -74,11 +75,13 @@ void	hand_l_command(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 			}
 			if (!node->argv[0])
 				exit(0);
+			free(node->cmd);
 			node->cmd = command(node->argv[0], envr);
 			if (!node->cmd || !ft_strcmp(node->cmd, ".."))
 			{
 				write(2, "minishell: command not found\n", 29);
 				ex_st(127, 1);
+				f_cmd(&node);
 				exit(127);
 			}
 			my_execve(node, envr);
@@ -115,12 +118,11 @@ void	handle_commands(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 	}
 }
 
-void	execution(t_cmd *node, t_list *list)
+void	ex(t_cmd *node, t_list *list)
 {
 	char		**envr;
 	t_execute	exec;
 
-	
 	exec.fd_int = dup(0);
 	exec.fd_out = dup(1);
 	envr = env_to_char_array(list->envs);
@@ -142,4 +144,3 @@ void	execution(t_cmd *node, t_list *list)
 	free_all(envr);
 	waits(&exec);
 }
-

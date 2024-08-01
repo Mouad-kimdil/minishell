@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   strings.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:53:50 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/29 15:01:45 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/31 23:14:04 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	char	*ptr;
 	int		j;
 
-	if (!s1 || !s2)
+	if (!s1 && !s2)
 		return (NULL);
 	len = ft_strlen((char *)s1) + ft_strlen((char *)s2) + 1;
 	ptr = malloc(len);
@@ -39,12 +39,12 @@ char	*ft_strjoin(char *s1, char *s2)
 		return (NULL);
 	i = 0;
 	j = 0;
-	while (s1[i])
+	while (s1 && s1[i])
 	{
 		ptr[i] = s1[i];
 		i++;
 	}
-	while (s2[j])
+	while (s2 && s2[j])
 	{
 		ptr[i + j] = s2[j];
 		j++;

@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 16:50:50 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/29 23:53:21 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/01 04:55:55 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ void	free_list(t_list *list)
 	t_env	*current;
 	t_env	*next;
 
+	if (!list)
+		return ;
 	current = list->envs;
 	while (current)
 	{
@@ -64,10 +66,12 @@ void	free_list(t_list *list)
 	free(list);
 }
 
-void	free_cmd_lst(t_cmd **lst)
+void	f_cmd(t_cmd **lst)
 {
 	t_cmd	*next;
 
+	if (!lst || !*lst)
+		return ;
 	while (*lst)
 	{
 		next = (*lst)->next;

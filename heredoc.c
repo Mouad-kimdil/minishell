@@ -3,25 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 14:55:09 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/29 15:02:33 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/01 04:03:10 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	get_delim(t_cmd *lst)
+void	get_del(t_cmd *lst)
 {
 	int		i;
 	int		k;
-	int		delim_size;
+	int		del_size;
 	char	*tmp1;
 
-	delim_size = get_delim_size(lst) * 2;
-	lst->delim = malloc(sizeof(char *) * delim_size + 1);
-	if (!lst->delim)
+	del_size = get_del_size(lst) * 2;
+	lst->del = malloc(sizeof(char *) * del_size + 1);
+	if (!lst->del)
 		return ;
 	i = -1;
 	k = 0;
@@ -33,12 +33,12 @@ void	get_delim(t_cmd *lst)
 				|| ft_strchr(lst->argv[i + 1], '\"'))
 				lst->in_quote = 1;
 			tmp1 = unquote(lst->argv[i + 1]);
-			lst->delim[k] = ft_strdup(tmp1);
+			lst->del[k] = ft_strdup(tmp1);
 			free(tmp1);
 			k++;
 		}
 	}
-	lst->delim[k] = NULL;
+	lst->del[k] = NULL;
 }
 
 char	*creat_heroc(t_cmd *lst)
@@ -51,7 +51,7 @@ char	*creat_heroc(t_cmd *lst)
 	while (++i)
 	{
 		tmp1 = ft_itoa(i);
-		tmp = ft_strjoin("heredoc", tmp1);
+		tmp = ft_strjoin("/tmp/.heredoc", tmp1);
 		if (!tmp || !tmp1)
 			return (free(tmp), free(tmp1), NULL);
 		free(tmp1);
@@ -67,9 +67,9 @@ char	*creat_heroc(t_cmd *lst)
 	return (NULL);
 }
 
-void	perferm_heredoc_help(int fd, char *exp, int in)
+void	perferm_heredoc_help(int fd, char *exp)
 {
-	if (exp && in != 1)
+	if (exp)
 	{
 		write(fd, exp, ft_strlen(exp));
 		write(fd, "\n", 1);
@@ -77,7 +77,7 @@ void	perferm_heredoc_help(int fd, char *exp, int in)
 	}
 }
 
-int	perferm_heredoc(t_cmd *lst, int in, char *delim, t_list *env)
+int	perferm_heredoc(t_cmd *lst, char *del, t_list *env)
 {
 	char	*exp;
 	char	*tmp;
@@ -91,43 +91,44 @@ int	perferm_heredoc(t_cmd *lst, int in, char *delim, t_list *env)
 			open(ttyname(2), O_RDWR);
 			return (free(tmp), 1);
 		}
-		if (!tmp || ((ft_strncmp(tmp, delim, ft_strlen(delim)) == 0)
-				&& (ft_strlen(tmp) == ft_strlen(delim))))
-			{
-				free(tmp);
-				break ;
-			}
-		exp = expand_heredoc(tmp, env);
+		if (!tmp || ((ft_strncmp(tmp, del, ft_strlen(del)) == 0)
+				&& (ft_strlen(tmp) == ft_strlen(del))))
+		{
+			free(tmp);
+			break ;
+		}
+		exp = expand_heredoc(tmp, env, lst->in_quote);
 		free(tmp);
-		perferm_heredoc_help(lst->fd, exp, in);
+		perferm_heredoc_help(lst->fd, exp);
 	}
 	return (0);
 }
 
-void	heredoc(t_cmd *lst, t_list *env)
+void	heredoc(t_cmd *l, t_list *env)
 {
-	char	*tmp;
+	char	*t;
 	int		i;
+	int		fd;
 
-	while (lst)
+	while (l)
 	{
 		i = -1;
-		get_delim(lst);
-		while (lst->delim[++i])
+		get_del(l);
+		while (l->del[++i])
 		{
-			tmp = creat_heroc(lst);
-			if (perferm_heredoc(lst, lst->in_quote, lst->delim[i], env))
+			t = creat_heroc(l);
+			fd = open(t, O_RDONLY);
+			unlink(t);
+			if (perferm_heredoc(l, l->del[i], env))
 			{
-				free(lst->delim[i]), unlink(tmp), free(tmp);
-				close(lst->fd);
+				(1) && (free(l->del[i]), unlink(t), free(t), close(l->fd), 0);
 				break ;
 			}
-			if (lst->infile != 0)
-				close(lst->infile);
-			lst->infile = open(tmp, O_RDONLY);
-			free(lst->delim[i]), close(lst->fd), unlink(tmp), free(tmp);
+			if (l->inf != 0)
+				close(l->inf);
+			(1) && (l->inf = fd, free(l->del[i]), close(l->fd), free(t), 0);
 		}
-		free(lst->delim);
-		lst = lst->next;
+		free(l->del);
+		l = l->next;
 	}
 }

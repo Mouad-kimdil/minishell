@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 02:03:02 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/30 01:04:44 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/01 03:57:43 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	remove_quotes_from_arg(char *arg, int in)
 	int		tr;
 	char	qoutes;
 
-	if ((count_single(arg) == 1 && count_double(arg) == 0) || (in == 1 || in == 2))
+	if ((count_single(arg) == 1 && count_double(arg) == 0)
+		|| (in == 1 || in == 2))
 		return ;
 	i = -1;
 	tr = 0;

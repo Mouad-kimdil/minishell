@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:24:10 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/25 02:34:41 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/01 04:00:43 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	is_heredoc(t_cmd *lst)
 	return (res);
 }
 
-int	get_delim_size(t_cmd *lst)
+int	get_del_size(t_cmd *lst)
 {
 	int	count;
 	int	i;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 16:20:55 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/22 22:51:15 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/07/31 14:54:45 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,23 @@ void	update_env(char *name, char *value, t_list *list)
 
 void	update_pwd(t_list *list)
 {
-	char	*home;
+	char	cwd[1024];
+	t_env	*pwd_env;
 
-	update_env("OLDPWD", my_getenv("PWD", list), list);
-	home = getcwd(NULL, 0);
-	update_env("PWD", home, list);
-	free(home);
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	{
+		pwd_env = find_env(list->envs, "PWD");
+		if (pwd_env)
+		{
+			free(pwd_env->value);
+			pwd_env->value = ft_strdup(cwd);
+		}
+		else
+		{
+			pwd_env = ft_lstnew("PWD", cwd);
+			ft_lstadd_back(&list->envs, pwd_env);
+		}
+	}
 }
 
 char	*ft_substr(char *s, int start, int len)

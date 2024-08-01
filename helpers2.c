@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helpers2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 16:15:15 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/16 16:15:45 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/01 04:00:13 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ int	check_if_built(t_cmd *node, t_list *list, t_execute *exec)
 			check_for_redirection(node);
 			if (is_builtin(node, list))
 			{
-				if (node->infile != 0)
-					close(node->infile);
+				if (node->inf != 0)
+					close(node->inf);
 				if (node->outfile != 1)
 					close(node->outfile);
 				dup2(exec->fd_int, 0);
@@ -85,8 +85,8 @@ int	check_if_built(t_cmd *node, t_list *list, t_execute *exec)
 
 void	close_all(t_cmd *node, t_execute *exec)
 {
-	if (node->infile != 0)
-		close(node->infile);
+	if (node->inf != 0)
+		close(node->inf);
 	if (node->outfile != 1)
 		close(node->outfile);
 	dup2(exec->fd_int, 0);

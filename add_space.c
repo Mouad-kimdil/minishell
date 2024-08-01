@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 18:53:40 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/05/26 18:13:22 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/01 05:22:18 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*add_space(char *line)
 	j = 0;
 	str = malloc(ft_strlen(line) + count_num_of_special(line) * 2 + 1);
 	if (!str)
-		return (free(line), NULL);
+		return (NULL);
 	while (line[i])
 	{
 		if ((line[i] == '<' && line[i + 1] == '<')

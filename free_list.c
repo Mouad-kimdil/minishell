@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 04:16:45 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/21 23:59:14 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/01 04:00:43 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	free_list1(t_cmd **lst)
 		tmp = (*lst)->next;
 		free_arr((*lst)->argv);
 		free((*lst)->cmd);
-		free_arr((*lst)->delim);
+		free_arr((*lst)->del);
 		free(*lst);
 		*lst = tmp;
 	}

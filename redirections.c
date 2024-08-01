@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 15:12:05 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/29 19:37:22 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/01 04:00:13 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@ int	redirect_in(t_cmd *node, int *index, int flags)
 		return (1);
 	if (node->argv[*index + 1])
 	{
-		if (node->infile != 0)
-			close(node->infile);
-		node->infile = open(node->argv[*index + 1], flags);
-		if (node->infile == -1)
+		if (node->inf != 0)
+			close(node->inf);
+		node->inf = open(node->argv[*index + 1], flags);
+		if (node->inf == -1)
 		{
 			msg_error(ft_strjoin("open: ", node->argv[*index + 1]));
 			return (1);

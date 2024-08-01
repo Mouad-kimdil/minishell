@@ -6,7 +6,7 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:02:46 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/29 20:08:34 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/31 14:52:35 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,6 @@ char	*command(char *my_argv, char **envr)
 
 	if (check(my_argv))
 		return (my_argv);
-	if (!envr)
-		return (NULL);
 	path = get_path(envr);
 	if (!path)
 		return (NULL);
@@ -94,7 +92,7 @@ void	free_all(char **str)
 		free(str[i]);
 		i++;
 	}
-	if(str)
+	if (str)
 		free(str);
 	str = NULL;
 }

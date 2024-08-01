@@ -6,13 +6,13 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 19:41:41 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/22 02:10:30 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/01 04:54:21 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_putstr_fd(char *s, int fd)
+void	put_fd(char *s, int fd)
 {
 	int	i;
 

@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 01:37:05 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/29 23:53:21 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/01 02:32:09 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ char	*handle_dollar_sign(char *curr, char *cmd, int *j, t_list *envp)
 	int		k;
 	char	*name;
 	char	*value;
+	char	*temp;
 
+	temp = NULL;
 	if (curr[*j + 1] == '?' || curr[*j + 1] == '$' || curr[*j + 1] == '"')
 		(*j)++;
 	else if (special_case(curr[*j + 1]))
@@ -39,15 +41,24 @@ char	*handle_dollar_sign(char *curr, char *cmd, int *j, t_list *envp)
 			(*j)++;
 		name = ft_substr(curr, k, *j - k);
 		value = get_env_value(name, envp->envs);
-		cmd = ft_strjoin(cmd, value);
 		free(name);
+		temp = cmd;
+		cmd = ft_strjoin(temp, value);
+		free(temp);
 	}
 	return (cmd);
 }
 
 char	*handle_other_cases(char *curr, char *cmd, int *j)
 {
-	cmd = ft_strjoin(cmd, ft_substr(curr, *j, 1));
+	char	*temp;
+	char	*temp1;
+
+	temp = cmd;
+	temp1 = ft_substr(curr, *j, 1);
+	cmd = ft_strjoin(temp, temp1);
+	free(temp1);
+	free(temp);
 	(*j)++;
 	return (cmd);
 }
@@ -58,7 +69,7 @@ char	*expand_here_cmd(char *temp, t_list *envp)
 	char	*curr;
 	int		j;
 
-	cmd = ft_strdup("");
+	cmd = NULL;
 	curr = temp;
 	j = 0;
 	while (curr[j])
@@ -71,12 +82,12 @@ char	*expand_here_cmd(char *temp, t_list *envp)
 	return (cmd);
 }
 
-char	*expand_heredoc(char *temp, t_list *envp)
+char	*expand_heredoc(char *temp, t_list *envp, int in)
 {
 	char	*expanded;
 
 	expanded = NULL;
-	if (ft_strchr(temp, '$'))
+	if (ft_strchr(temp, '$') && in == -1)
 		expanded = expand_here_cmd(temp, envp);
 	if (!expanded)
 		expanded = ft_strdup(temp);

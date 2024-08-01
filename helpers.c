@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helpers.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 17:53:55 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/16 13:14:05 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/01 04:00:13 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	close_files(t_cmd *node)
 {
-	if (node->infile != 0)
-		close(node->infile);
+	if (node->inf != 0)
+		close(node->inf);
 	if (node->outfile != 1)
 		close(node->outfile);
 }

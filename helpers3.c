@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helpers3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 16:18:27 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/29 19:38:56 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/01 04:00:13 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 void	my_dup1(t_cmd *node, t_execute *exec)
 {
-	if (node->infile != 0)
+	if (node->inf != 0)
 	{
-		if (dup2(node->infile, 0) == -1)
-			msg_error("dup2 in infile");
-		close(node->infile);
+		if (dup2(node->inf, 0) == -1)
+			msg_error("dup2 in inf");
+		close(node->inf);
 	}
-	else if (node->outfile != 1)
+	if (node->outfile != 1)
 	{
 		if (dup2(node->outfile, 1) == -1)
 			msg_error("dup2 in outfile");
@@ -37,11 +37,11 @@ void	my_dup1(t_cmd *node, t_execute *exec)
 
 void	my_dup2(t_cmd *node)
 {
-	if (node->infile != 0)
+	if (node->inf != 0)
 	{
-		if (dup2(node->infile, 0) == -1)
-			msg_error("dup2 in infile");
-		close(node->infile);
+		if (dup2(node->inf, 0) == -1)
+			msg_error("dup2 in inf");
+		close(node->inf);
 	}
 	if (node->outfile != 1)
 	{

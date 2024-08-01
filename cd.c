@@ -6,7 +6,7 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 14:54:47 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/29 16:06:47 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/07/31 14:51:58 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,18 @@ void	error_function(char *home, t_list *list)
 	update_pwd(list);
 }
 
-t_env *find_env(t_env *envs, char *key)
+t_env	*find_env(t_env *envs, char *key)
 {
 	while (envs)
 	{
 		if (ft_strcmp(envs->name, key) == 0)
-			return envs;
+			return (envs);
 		envs = envs->next;
 	}
-	return NULL;
+	return (NULL);
 }
 
-
-void update_oldpwd(t_list *list, char *old_pwd)
+void	update_oldpwd(t_list *list, char *old_pwd)
 {
 	t_env	*oldpwd_env;
 
@@ -77,9 +76,10 @@ int	cd(char **argv, t_list *list)
 {
 	int		i;
 	char	*home;
-	char *old_pwd = getcwd(NULL, 0);
+	char	*old_pwd;
 
 	i = 1;
+	old_pwd = getcwd(NULL, 0);
 	home = NULL;
 	while (argv[i])
 		i++;
@@ -97,7 +97,5 @@ int	cd(char **argv, t_list *list)
 	}
 	update_oldpwd(list, old_pwd);
 	update_pwd(list);
-	free(old_pwd);
-	ex_st(0, 1);
-	return (0);
+	return (free(old_pwd), ex_st(0, 1), 0);
 }
