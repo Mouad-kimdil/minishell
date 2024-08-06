@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helpers2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 16:15:15 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/01 04:00:13 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/04 18:10:06 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,17 @@ int	ex_st(int status, int mode)
 int	is_builtin(t_cmd *cmd, t_list *list)
 {
 	if (!ft_strcmp(cmd->argv[0], "echo"))
-		return (echo(cmd->argv, cmd->outfile), 1);
+		return (echo(cmd->argv), 1);
 	if (!ft_strcmp(cmd->argv[0], "cd"))
 		return (cd(cmd->argv, list), 1);
 	if (!ft_strcmp(cmd->argv[0], "pwd"))
-		return (pwd(cmd->argv, list, cmd->outfile), 1);
+		return (pwd(cmd->argv, list), 1);
 	if (!ft_strcmp(cmd->argv[0], "export"))
-		return (export(cmd->argv, list, cmd->outfile), 1);
+		return (export(cmd->argv, list), 1);
 	if (!ft_strcmp(cmd->argv[0], "unset"))
 		return (unset(cmd->argv, &list->envs), 1);
 	if (!ft_strcmp(cmd->argv[0], "env"))
-		return (env(cmd->argv, list, cmd->outfile), 1);
+		return (env(cmd->argv, list), 1);
 	if (!ft_strcmp(cmd->argv[0], "exit"))
 		return (exit_function(cmd->argv), 1);
 	return (0);
@@ -66,6 +66,7 @@ int	check_if_built(t_cmd *node, t_list *list, t_execute *exec)
 		if (checkbuiltin(node))
 		{
 			check_for_redirection(node);
+			my_dup2(node);
 			if (is_builtin(node, list))
 			{
 				if (node->inf != 0)

@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 01:18:26 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/30 03:04:05 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/03 00:26:09 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	**join_args_help(char **s1, char **splited, char **res, int i)
 	{
 		res[k] = ft_strdup(splited[j]);
 		if (!res[k])
-			return (free_all(res), free_all(splited), NULL);
+			return (fr(res), fr(splited), NULL);
 		j++;
 		k++;
 	}
@@ -35,7 +35,7 @@ char	**join_args_help(char **s1, char **splited, char **res, int i)
 		i++;
 	}
 	res[k] = NULL;
-	return (free_all(s1), free_all(splited), res);
+	return (fr(s1), fr(splited), res);
 }
 
 char	**join_args(char **s1, char *expanded)
@@ -47,13 +47,13 @@ char	**join_args(char **s1, char *expanded)
 	splited = ft_split_2(expanded);
 	res = malloc((args_len(s1) + args_len(splited) + 1) * sizeof(char *));
 	if (!splited || !res)
-		return (free_all(splited), free(res), NULL);
+		return (fr(splited), free(res), NULL);
 	i = 0;
 	while (s1[i] && !ft_strchr(s1[i], '$'))
 	{
 		res[i] = ft_strdup(s1[i]);
 		if (!res[i])
-			return (free_all(res), free_all(splited), NULL);
+			return (fr(res), fr(splited), NULL);
 		i++;
 	}
 	return (join_args_help(s1, splited, res, i));

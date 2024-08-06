@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 14:55:09 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/01 04:03:10 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/03 21:16:55 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	get_del(t_cmd *lst)
 	char	*tmp1;
 
 	del_size = get_del_size(lst) * 2;
-	lst->del = malloc(sizeof(char *) * del_size + 1);
+	lst->del = malloc(sizeof(char *) * (del_size + 1));
 	if (!lst->del)
 		return ;
 	i = -1;
@@ -88,6 +88,7 @@ int	perferm_heredoc(t_cmd *lst, char *del, t_list *env)
 		tmp = readline("> ");
 		if (!ttyname(0))
 		{
+			close(lst->inf);
 			open(ttyname(2), O_RDWR);
 			return (free(tmp), 1);
 		}
@@ -104,7 +105,7 @@ int	perferm_heredoc(t_cmd *lst, char *del, t_list *env)
 	return (0);
 }
 
-void	heredoc(t_cmd *l, t_list *env)
+int	heredoc(t_cmd *l, t_list *env)
 {
 	char	*t;
 	int		i;
@@ -112,23 +113,21 @@ void	heredoc(t_cmd *l, t_list *env)
 
 	while (l)
 	{
-		i = -1;
-		get_del(l);
+		(1) && (i = -1, get_del(l), 0);
 		while (l->del[++i])
 		{
-			t = creat_heroc(l);
-			fd = open(t, O_RDONLY);
+			(1) && (t = creat_heroc(l), fd = open(t, O_RDONLY), 0);
 			unlink(t);
 			if (perferm_heredoc(l, l->del[i], env))
 			{
-				(1) && (free(l->del[i]), unlink(t), free(t), close(l->fd), 0);
-				break ;
+				(1) && (fr(l->del), free(t), close(l->fd), close(fd), 0);
+				return (1);
 			}
-			if (l->inf != 0)
-				close(l->inf);
-			(1) && (l->inf = fd, free(l->del[i]), close(l->fd), free(t), 0);
+			(l->inf != 0) && (close(l->inf), 0);
+			(1) && (l->inf = fd, close(l->fd), free(t), 0);
 		}
-		free(l->del);
+		fr(l->del);
 		l = l->next;
 	}
+	return (0);
 }

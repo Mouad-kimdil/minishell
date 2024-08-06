@@ -6,7 +6,7 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 11:40:25 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/16 13:10:35 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/04 17:58:37 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	check_if_flag(char *argv)
 	return (0);
 }
 
-int	print_arguments(char **argv, int start, int outfile)
+int	print_arguments(char **argv, int start)
 {
 	int	i;
 
@@ -40,14 +40,14 @@ int	print_arguments(char **argv, int start, int outfile)
 	{
 		if (!ft_strcmp(argv[i], "?"))
 		{
-			ft_putnbr_fd(ex_st(0, 0), outfile);
-			ft_putchar_fd('\n', outfile);
+			ft_putnbr_fd(ex_st(0, 0), 1);
+			ft_putchar_fd('\n', 1);
 			ex_st(0, 1);
 			return (0);
 		}
-		write(outfile, argv[i], ft_strlen(argv[i]));
+		write(1, argv[i], ft_strlen(argv[i]));
 		if (argv[i + 1])
-			write(outfile, " ", 1);
+			write(1, " ", 1);
 		i++;
 	}
 	return (1);
@@ -63,7 +63,7 @@ int	checking_null(char **argv)
 	return (0);
 }
 
-int	echo(char **argv, int outfile)
+int	echo(char **argv)
 {
 	int	i;
 	int	flag;
@@ -74,8 +74,8 @@ int	echo(char **argv, int outfile)
 		return (0);
 	if (ft_strcmp(argv[i], "-") == 0)
 	{
-		write(outfile, argv[i], ft_strlen(argv[i]));
-		write(outfile, " ", 1);
+		write(1, argv[i], ft_strlen(argv[i]));
+		write(1, " ", 1);
 		i++;
 	}
 	while (argv[i] && !check_if_flag(argv[i]))
@@ -83,9 +83,9 @@ int	echo(char **argv, int outfile)
 		flag = 1;
 		i++;
 	}
-	if (print_arguments(argv, i, outfile) == 0)
+	if (print_arguments(argv, i) == 0)
 		return (0);
 	if (!flag)
-		write(outfile, "\n", 1);
+		write(1, "\n", 1);
 	return (0);
 }

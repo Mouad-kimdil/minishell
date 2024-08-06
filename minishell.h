@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/01 05:34:28 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/05 00:30:12 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,14 +105,14 @@ int		is_number(char c);
 int		is_upper(char c);
 int		is_lower(char c);
 int		is_ascii(char c);
-int		echo(char **argv, int outfile);
+int		echo(char **argv);
 int		cd(char **argv, t_list *list);
 int		exit_function(char **argv);
 void	env_1(char **argv, t_env *list, int outfile);
-void	env(char **argv, t_list *list, int outfile);
+void	env(char **argv, t_list *list);
 int		unset(char **argv, t_env **envps);
-void	pwd(char **args, t_list *list, int outfile);
-void	export(char **argv, t_list *list, int outfile);
+void	pwd(char **args, t_list *list);
+void	export(char **argv, t_list *list);
 int		syn_error(char *line);
 int		syn_err_chars(int c);
 int		last_check(int c);
@@ -159,7 +159,7 @@ int		is_builtin(t_cmd *cmd, t_list *list);
 void	env_to_char_array_helper(t_env *current, char **envp);
 char	**env_to_char_array(t_env *head);
 void	error_open(char *str);
-void	free_all(char **str);
+void	fr(char **str);
 void	f_cmd(t_cmd **lst);
 char	*command(char *my_argv, char **envr);
 int		env_size(t_env *env);
@@ -171,7 +171,6 @@ int		add_the_value(char *name, char *value, t_list *list);
 void	add_env(t_env **env, char *name, char *value);
 void	remove_qoutes(t_cmd **lst);
 int		is_heredoc(t_cmd *lst);
-void	heredoc(t_cmd *lst, t_list *env);
 char	*creat_heroc(t_cmd *lst);
 void	perferm_heredoc_help(int fd, char *exp);
 int		perferm_heredoc(t_cmd *lst, char *del, t_list *env);
@@ -221,7 +220,7 @@ int		special_case(char c);
 void	expand_with_space(t_cmd *lst, char *expanded);
 void	expand_without_space(t_cmd *lst, int *tr, int *i, char *expanded);
 void	expand_helper(t_cmd *lst, t_list *envp, int *i, int *tr);
-void	handle_special_case(t_expand *exp, int *j, int *k, t_list *envp);
+void	handle_special_case(t_expand *exp, int *j, t_cmd *lst, t_list *envp);
 char	*expand_cmd(t_cmd *lst, t_list *envp, int i);
 void	expand(t_cmd *lst, t_list *envp);
 void	add_back(t_cmd **lst, t_cmd *new);
@@ -244,12 +243,16 @@ int		countword_2(char *s);
 int		is_whitespace(int c);
 char	*duplicate(char *str);
 t_env	*find_env(t_env *envs, char *key);
-void	heredoc(t_cmd *l, t_list *env);
+int		heredoc(t_cmd *l, t_list *env);
 void	last_case(t_expand *exp, int *j);
 int		parsing(t_cmd **lst, t_parse *p, t_list *list);
 int		tty_error(t_parse *p);
 void	secure_path(t_list *list);
 void	f_env(t_env *envs);
 void	free_parse(t_parse *p);
+void	dolar_dolar_case(t_expand *exp, int *j);
+int		expand_cases(char c);
+void	numeric_expand(t_cmd *lst, t_expand *exp, int *j);
+void	handle_double_quote(t_expand *exp, int *j, t_cmd *lst, t_list *envp);
 
 #endif

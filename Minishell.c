@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/24 04:01:04 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/01 05:31:11 by mkimdil          ###   ########.fr       */
+/*   Created: 2024/08/02 01:48:07 by mkimdil           #+#    #+#             */
+/*   Updated: 2024/08/06 17:03:46 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,11 @@ int	parsing(t_cmd **lst, t_parse *p, t_list *list)
 	if (!ft_strlen(p->temp) || is_blank(p->temp))
 		return (free(p->temp), 1);
 	add_history(p->temp);
-	if (!ft_strlen(p->temp) || is_blank(p->temp))
-		return (free(p->temp), 1);
 	p->str = add_space(p->temp);
 	if (!p->str)
 		return (free(p->temp), 1);
 	if (syn_error(p->str))
-		return (free(p->temp), free(p->str), 1);
+		return (ex_st(258, 1), free(p->temp), free(p->str), 1);
 	change_to_garb(p->str);
 	if (handle_single_double(p->str))
 		return (free(p->temp), free(p->str), 1);
@@ -83,10 +81,11 @@ int	parsing(t_cmd **lst, t_parse *p, t_list *list)
 		return (free(p->temp), free(p->str), 1);
 	*lst = build_arr(p->res);
 	if (!*lst)
-		return (free(p->temp), free(p->str), free_all(p->res), 1);
+		return (free(p->temp), free(p->str), fr(p->res), 1);
 	back_to_ascii(*lst);
 	if (is_heredoc(*lst))
-		heredoc(*lst, list);
+		if (heredoc(*lst, list))
+			return (free_parse(p), f_cmd(lst), 1);
 	expand(*lst, list);
 	return (remove_qoutes(lst), free_parse(p), 0);
 }
@@ -101,13 +100,15 @@ int	main(int ac, char **av, char **env)
 	if (ac != 1)
 		return (1);
 	(1) && ((void)av, g_signal_status = 0, l = malloc(sizeof(t_list)), 0);
+	if (!l)
+		return (1);
 	(1) && (l->envs = env_init(env), 0);
 	if (!l->envs)
 		secure_path(l);
 	while (1)
 	{
 		if (tty_error(&p))
-			return (f_env(l->envs), free(l), free(lst), put_fd("exit\n", 2), 0);
+			return (f_env(l->envs), free(l), put_fd("exit\n", 2), ex_st(0, 0));
 		(1) && (rl_catch_signals = 0, check_signals(), 0);
 		if (parsing(&lst, &p, l))
 			continue ;

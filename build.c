@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 12:07:53 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/01 05:26:10 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/03 00:26:09 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	free_parse(t_parse *p)
 {
 	if (!p)
 		return ;
-	free_all(p->res);
+	fr(p->res);
 	free(p->str);
 	free(p->temp);
 }
@@ -78,7 +78,7 @@ t_cmd	*build_arr(char **res)
 	{
 		node = ft_new(res[i]);
 		if (!node)
-			return (free_all(res), NULL);
+			return (fr(res), NULL);
 		add_back(&head, node);
 		i++;
 	}

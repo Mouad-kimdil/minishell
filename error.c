@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 16:50:50 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/01 04:55:55 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/03 13:22:10 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	f_cmd(t_cmd **lst)
 	{
 		next = (*lst)->next;
 		free((*lst)->cmd);
-		free_all((*lst)->argv);
+		fr((*lst)->argv);
 		free(*lst);
 		*lst = next;
 	}
