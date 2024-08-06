@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 11:03:27 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/30 03:10:47 by codespace        ###   ########.fr       */
+/*   Updated: 2024/08/04 18:01:21 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,13 +73,13 @@ t_env	*env_init(char **envp)
 				break ;
 			ft_lstadd_back(&head, new);
 		}
-		free_all(sp);
+		fr(sp);
 		i++;
 	}
 	return (head);
 }
 
-void	env(char **argv, t_list *list, int outfile)
+void	env(char **argv, t_list *list)
 {
 	t_env	*env;
 
@@ -89,10 +89,10 @@ void	env(char **argv, t_list *list, int outfile)
 	{
 		if (env->value)
 		{
-			write(outfile, env->name, ft_strlen(env->name));
-			write(outfile, "=", 1);
-			write(outfile, env->value, ft_strlen(env->value));
-			write(outfile, "\n", 1);
+			write(1, env->name, ft_strlen(env->name));
+			write(1, "=", 1);
+			write(1, env->value, ft_strlen(env->value));
+			write(1, "\n", 1);
 		}
 		env = env->next;
 	}

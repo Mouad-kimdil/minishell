@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 11:38:59 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/06/03 16:53:37 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/05 12:54:43 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	print_export(t_env *env, int outfile)
+void	print_export(t_env *env)
 {
 	int		size;
 	int		i;
@@ -24,15 +24,15 @@ void	print_export(t_env *env, int outfile)
 	{
 		if (env && env->index == i)
 		{
-			write(outfile, "declare -x ", 11);
-			write(outfile, env->name, ft_strlen(env->name));
+			write(1, "declare -x ", 11);
+			write(1, env->name, ft_strlen(env->name));
 			if (env->value)
 			{
-				write(outfile, "=\"", 2);
-				write(outfile, env->value, ft_strlen(env->value));
-				write(outfile, "\"", 1);
+				write(1, "=\"", 2);
+				write(1, env->value, ft_strlen(env->value));
+				write(1, "\"", 1);
 			}
-			write(outfile, "\n", 1);
+			write(1, "\n", 1);
 			i++;
 		}
 		env = env->next;
@@ -80,7 +80,12 @@ void	checking_and_add(int is_valid, char *argv, t_list *list)
 	free(name);
 }
 
-void	export(char **argv, t_list *list, int outfile)
+int	expand_cases(char c)
+{
+	return (is_ascii(c) || is_number(c) || c == '_');
+}
+
+void	export(char **argv, t_list *list)
 {
 	int		is_valid;
 	t_env	*env;
@@ -88,7 +93,7 @@ void	export(char **argv, t_list *list, int outfile)
 	if (!*(argv + 1))
 	{
 		env = list->envs;
-		print_export(env, outfile);
+		print_export(env);
 		return ;
 	}
 	argv++;

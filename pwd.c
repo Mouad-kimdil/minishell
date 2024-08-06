@@ -6,13 +6,13 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 13:39:12 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/31 14:53:56 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/04 18:00:11 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pwd(char **args, t_list *list, int outfile)
+void	pwd(char **args, t_list *list)
 {
 	char	*pwdir;
 	char	*tmp;
@@ -34,8 +34,8 @@ void	pwd(char **args, t_list *list, int outfile)
 			return ;
 		}
 	}
-	write(outfile, pwdir, ft_strlen(pwdir));
-	write(outfile, "\n", 1);
+	write(1, pwdir, ft_strlen(pwdir));
+	write(1, "\n", 1);
 	if (allocated)
 		free(pwdir);
 	ex_st(0, 1);

@@ -6,7 +6,7 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/06 21:07:01 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/16 13:18:09 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/02 22:06:49 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	free_env(char *name, t_env **envps)
 	{
 		if (!ft_strcmp(tmp->name, name))
 		{
+			if (!ft_strcmp(tmp->name, "_"))
+				return ;
 			if (!prev)
 				*envps = tmp->next;
 			else

@@ -6,7 +6,7 @@
 /*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 12:07:53 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/29 14:57:16 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/05 12:54:56 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	special_case(char c)
 {
-	return (is_ascii(c) || is_number(c) || c == '_');
+	return (is_ascii(c) || c == '_');
 }
 
 int	args_len(char **arg)
@@ -78,6 +78,12 @@ int	exit_function(char **argv)
 	{
 		if (argv[2] == NULL)
 		{
+			if (ft_atoi(argv[1]) == -1 || ft_atoi(argv[1]) == 0)
+			{
+				printf("%s: %s: numeric argument required\n", argv[0], argv[1]);
+				ex_st(255, 1);
+				exit(255);
+			}
 			if (ft_atoi(argv[1]) < 0)
 				exit_functions_help(argv[1], -1);
 			else if (ft_atoi(argv[1]) > 255)
