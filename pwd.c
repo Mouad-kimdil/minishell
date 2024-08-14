@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 13:39:12 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/04 18:00:11 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	pwd(char **args, t_list *list)
 		{
 			if (tmp)
 				printf("%s\n", tmp);
-			ex_st(1, 1);
+			exit_status(1, 1);
 			return ;
 		}
 	}
@@ -38,7 +38,7 @@ void	pwd(char **args, t_list *list)
 	write(1, "\n", 1);
 	if (allocated)
 		free(pwdir);
-	ex_st(0, 1);
+	exit_status(0, 1);
 }
 
 void	error_open(char *str)

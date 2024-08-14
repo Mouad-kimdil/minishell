@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 14:55:09 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/03 21:16:55 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/14 05:15:02 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	perferm_heredoc(t_cmd *lst, char *del, t_list *env)
 {
 	char	*exp;
 	char	*tmp;
-
+	(void)	*env;
 	while (1)
 	{
 		signal(SIGINT, her_sin);

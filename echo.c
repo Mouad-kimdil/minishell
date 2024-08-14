@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 11:40:25 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/04 17:58:37 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ int	print_arguments(char **argv, int start)
 	{
 		if (!ft_strcmp(argv[i], "?"))
 		{
-			ft_putnbr_fd(ex_st(0, 0), 1);
+			ft_putnbr_fd(exit_status(0, 0), 1);
 			ft_putchar_fd('\n', 1);
-			ex_st(0, 1);
+			exit_status(0, 1);
 			return (0);
 		}
 		write(1, argv[i], ft_strlen(argv[i]));

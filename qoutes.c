@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   qoutes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 17:44:40 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/03 17:08:54 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	handle_single_double(char *line)
 		i++;
 	}
 	if (tr == 1 || tr == 2)
-		return (ex_st(258, 1), printf("syntax error\n"), 1);
+		return (exit_status(258, 1), printf("syntax error\n"), 1);
 	return (0);
 }
 

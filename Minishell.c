@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 01:48:07 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/06 17:03:46 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/14 05:09:40 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,27 +55,30 @@ void	f_env(t_env *envs)
 	envs = NULL;
 }
 
-int	tty_error(t_parse *p)
+void	print_list(t_cmd *lst)
 {
-	if (!p->temp || !isatty(0))
-		return (1);
-	return (0);
+	while (lst)
+	{
+		int i = 0;
+		while (lst->argv[i])
+		{
+			printf("lst->argv[%d]: %s\n", i, lst->argv[i]);
+			i++;
+		}
+		lst = lst->next;
+	}
 }
 
 int	parsing(t_cmd **lst, t_parse *p, t_list *list)
 {
-	p->temp = readline("Minishell-$ ");
-	if (!ft_strlen(p->temp) || is_blank(p->temp))
-		return (free(p->temp), 1);
-	add_history(p->temp);
 	p->str = add_space(p->temp);
 	if (!p->str)
 		return (free(p->temp), 1);
-	if (syn_error(p->str))
-		return (ex_st(258, 1), free(p->temp), free(p->str), 1);
 	change_to_garb(p->str);
 	if (handle_single_double(p->str))
 		return (free(p->temp), free(p->str), 1);
+	if (syn_error(p->str))
+		return (exit_status(258, 1), free(p->temp), free(p->str), 1);
 	p->res = ft_split(p->str, '|');
 	if (!p->res)
 		return (free(p->temp), free(p->str), 1);
@@ -87,7 +90,8 @@ int	parsing(t_cmd **lst, t_parse *p, t_list *list)
 		if (heredoc(*lst, list))
 			return (free_parse(p), f_cmd(lst), 1);
 	expand(*lst, list);
-	return (remove_qoutes(lst), free_parse(p), 0);
+	remove_qoutes(lst);
+	return (free_parse(p), 0);
 }
 
 int	main(int ac, char **av, char **env)
@@ -96,24 +100,38 @@ int	main(int ac, char **av, char **env)
 	t_cmd			*lst;
 	t_list			*l;
 	struct termios	copy;
+	(void)			av;
 
 	if (ac != 1)
 		return (1);
-	(1) && ((void)av, g_signal_status = 0, l = malloc(sizeof(t_list)), 0);
+	g_signal_status = 0;
+	l = malloc(sizeof(t_list));
 	if (!l)
 		return (1);
-	(1) && (l->envs = env_init(env), 0);
+	l->envs = env_init(env);
 	if (!l->envs)
 		secure_path(l);
 	while (1)
 	{
-		if (tty_error(&p))
-			return (f_env(l->envs), free(l), put_fd("exit\n", 2), ex_st(0, 0));
-		(1) && (rl_catch_signals = 0, check_signals(), 0);
+		rl_catch_signals = 0;
+		check_signals();
+		p.temp = readline("Minishell-$ ");
+		if (!p.temp || !isatty(0))
+			return (f_env(l->envs), free(l), put_fd("exit\n", 2), exit_status(0, 0));
+		if (!ft_strlen(p.temp) || is_blank(p.temp))
+		{
+			free(p.temp);
+			continue ;
+		}
+		add_history(p.temp);
 		if (parsing(&lst, &p, l))
 			continue ;
-		(1) && (g_signal_status = 1, tcgetattr(0, &copy), ex(lst, l), 0);
-		(1) && (tcsetattr(0, 0, &copy), g_signal_status = 0, f_cmd(&lst), 0);
+		g_signal_status = 1;
+		tcgetattr(0, &copy);
+		ex(lst, l);
+		tcsetattr(0, 0, &copy);
+		g_signal_status = 0;
+		f_cmd(&lst);
 	}
 	return (f_env(l->envs), free(l), 0);
 }

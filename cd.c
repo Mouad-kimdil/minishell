@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 14:54:47 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/02 14:11:17 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@ void	home_function(char *home, t_list *list)
 	if (!home)
 	{
 		printf("cd: HOME not set\n");
-		ex_st(1, 1);
+		exit_status(1, 1);
 		return ;
 	}
 	if (chdir(home) == -1)
 	{
 		printf("cd: %s: No such file or directory\n", home);
-		ex_st(1, 1);
+		exit_status(1, 1);
 	}
 	update_pwd(list);
-	ex_st(0, 1);
+	exit_status(0, 1);
 }
 
 void	error_function(char *home, t_list *list)
@@ -40,7 +40,7 @@ void	error_function(char *home, t_list *list)
 	printf("cd: error retrieving current directory: ");
 	printf("getcwd: cannot access parent directories: ");
 	printf ("No such file or directory\n");
-	ex_st(1, 1);
+	exit_status(1, 1);
 	update_pwd(list);
 }
 
@@ -97,12 +97,12 @@ int	cd(char **argv, t_list *list)
 		if (!ft_strcmp(argv[1], ".."))
 			return (error_function(home, list), free(old_pwd), 0);
 		else if (!ft_strcmp(argv[1], "\0"))
-			return (ex_st(0, 1), free(old_pwd), 0);
+			return (exit_status(0, 1), free(old_pwd), 0);
 		printf("cd: %s: No such file or directory\n", argv[1]);
 		free(old_pwd);
-		return (ex_st(1, 1), 1);
+		return (exit_status(1, 1), 1);
 	}
 	update_pwd(list);
 	update_oldpwd(list, old_pwd);
-	return (free(old_pwd), ex_st(0, 1), 0);
+	return (free(old_pwd), exit_status(0, 1), 0);
 }

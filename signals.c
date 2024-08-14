@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:25:50 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/07/30 00:37:38 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	function_sigint(int sig)
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
-		ex_st(1, 1);
+		exit_status(1, 1);
 	}
 }
 

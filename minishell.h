@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/05 00:30:12 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,15 @@
 
 extern int	g_signal_status;
 
+typedef struct s_append
+{
+	char	**temp;
+	int		i;
+	int		j;
+	int		k;
+	int		total_len;
+}	t_append;
+
 typedef struct s_parse
 {
 	char	*temp;
@@ -38,6 +47,7 @@ typedef struct s_parse
 typedef struct s_expand
 {
 	int		len;
+	int		tr;
 	int		in_single_quote;
 	int		in_double_quote;
 	char	*cmd;
@@ -71,6 +81,7 @@ typedef struct s_cmd
 	char			*cmd;
 	char			**argv;
 	char			**del;
+	int				fl1;
 	int				fd;
 	int				inf;
 	int				outfile;
@@ -177,7 +188,7 @@ int		perferm_heredoc(t_cmd *lst, char *del, t_list *env);
 void	her_sin(int sig);
 void	get_del(t_cmd *lst);
 int		get_del_size(t_cmd *lst);
-int		ex_st(int status, int mode);
+int		exit_status(int status, int mode);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_putchar_fd(char c, int fd);
 char	*ft_strcat(char *dest, char *src);
@@ -202,6 +213,7 @@ void	function_sigwuit(int sig);
 void	check_signals(void);
 void	remove_qoutes(t_cmd **lst);
 int		ft_isspace(char str);
+int		check_is_ambg(char *expanded);
 int		is_blank(char *str);
 int		check_line(char **res);
 void	ft_add_back(t_exp **lst, t_exp *new);
@@ -217,7 +229,7 @@ char	*expand_here_cmd(char *temp, t_list *envp);
 char	*expand_heredoc(char *temp, t_list *envp, int in);
 char	*get_env_value(char *name, t_env *env);
 int		special_case(char c);
-void	expand_with_space(t_cmd *lst, char *expanded);
+void	expand_with_space(t_cmd *lst, char *expanded, int *i);
 void	expand_without_space(t_cmd *lst, int *tr, int *i, char *expanded);
 void	expand_helper(t_cmd *lst, t_list *envp, int *i, int *tr);
 void	handle_special_case(t_expand *exp, int *j, t_cmd *lst, t_list *envp);
@@ -254,5 +266,12 @@ void	dolar_dolar_case(t_expand *exp, int *j);
 int		expand_cases(char c);
 void	numeric_expand(t_cmd *lst, t_expand *exp, int *j);
 void	handle_double_quote(t_expand *exp, int *j, t_cmd *lst, t_list *envp);
+void	check_expanded(t_cmd *lst, int *i, int *tr);
+void	remove_null_values(char **argv, int size);
+char	**append(char **argv, int len);
+void	handle_single_quote(t_expand *exp, int *j);
+void	noex_single(t_expand *exp, int *j);
+char	*expand_export(t_cmd *lst, t_list *envp, int i);
+char	*get_env_value_2(char *name, t_env *env);
 
 #endif

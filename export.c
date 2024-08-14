@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 11:38:59 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/05 12:54:43 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,12 +103,12 @@ void	export(char **argv, t_list *list)
 		if (is_valid == -1)
 		{
 			printf("minishell: export: `%s': not a valid identifier\n", *argv);
-			ex_st(1, 1);
+			exit_status(1, 1);
 		}
 		else
 		{
 			checking_and_add(is_valid, *argv, list);
-			ex_st(0, 1);
+			exit_status(0, 1);
 		}
 		argv++;
 	}

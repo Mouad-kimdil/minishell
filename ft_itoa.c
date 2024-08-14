@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 19:41:41 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/01 04:54:21 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/11 15:32:22 by aboukdid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	check_is_ambg(char *expanded)
+{
+	int		nb;
+
+	nb = ft_strnstr(expanded, ">>");
+	return (ft_strsearch(expanded, '>') || nb);
+}
 
 void	put_fd(char *s, int fd)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_helpers.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:09:26 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/01 22:12:10 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	checking_ambigious(t_cmd *node)
 			tmp->argv[o] = ft_strdup("#");
 			o++;
 		}
-		ex_st(1, 1);
+		exit_status(1, 1);
 		return (1);
 	}
 	return (0);
@@ -73,7 +73,7 @@ int	checking_error(t_cmd *node, int index)
 	str = ft_split_2(node->argv[index]);
 	if (split_stlen(str) > 1)
 	{
-		ex_st(1, 1);
+		exit_status(1, 1);
 		write(2, "ambiguous redirect\n", 19);
 		return (1);
 	}

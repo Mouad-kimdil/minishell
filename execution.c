@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 10:59:50 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/04 18:09:47 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ void	waits(t_execute *exec)
 		while (wait(&status) != -1)
 		{
 			if (WIFEXITED(status))
-				ex_st(WEXITSTATUS(status), 1);
+				exit_status(WEXITSTATUS(status), 1);
 			if (WIFSIGNALED(status))
-				ex_st(WTERMSIG(status) + 128, 1);
+				exit_status(WTERMSIG(status) + 128, 1);
 		}
-		ex_st(last_status, 1);
+		exit_status(last_status, 1);
 	}
 }
 
@@ -41,19 +41,19 @@ void	my_execve(t_cmd *node, char **envr)
 		if (!ft_strncmp(node->cmd, ".", 1))
 		{
 			write(2, "minishell: .: filename argument required\n", 41);
-			ex_st(2, 1);
+			exit_status(2, 1);
 			exit(2);
 		}
 		else if (!ft_strcmp(node->cmd, "/"))
 		{
 			write(2, "minishell: /: is a directory\n", 29);
-			ex_st(126, 1);
+			exit_status(126, 1);
 			exit(126);
 		}
 		else
 		{
 			msg_error("minishell");
-			ex_st(126, 1);
+			exit_status(126, 1);
 			exit(126);
 		}
 	}
@@ -79,7 +79,7 @@ void	hand_l_command(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 			if (!node->cmd || !ft_strcmp(node->cmd, ".."))
 			{
 				write(2, "minishell: command not found\n", 29);
-				ex_st(127, 1);
+				exit_status(127, 1);
 				exit(127);
 			}
 			my_execve(node, envr);
@@ -106,7 +106,7 @@ void	handle_commands(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 			if (!node->cmd)
 			{
 				write(2, "minishell: command not found\n", 29);
-				(1) && (ex_st(127, 1), exit(127), 0);
+				(1) && (exit_status(127, 1), exit(127), 0);
 			}
 			my_execve(node, envr);
 		}

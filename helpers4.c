@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:24:10 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/01 04:00:43 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	her_sin(int sig)
 	if (sig == SIGINT)
 	{
 		close(0);
-		ex_st(1, 1);
+		exit_status(1, 1);
 	}
 }
 

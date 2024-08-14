@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   helpers2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 16:15:15 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/04 18:10:06 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ex_st(int status, int mode)
+int	exit_status(int status, int mode)
 {
 	static int	num;
 
@@ -65,7 +65,11 @@ int	check_if_built(t_cmd *node, t_list *list, t_execute *exec)
 	{
 		if (checkbuiltin(node))
 		{
-			check_for_redirection(node);
+			if (check_for_redirection(node))
+			{
+				close_all(node, exec);
+				return (1);
+			}
 			my_dup2(node);
 			if (is_builtin(node, list))
 			{

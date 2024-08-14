@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 12:07:53 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/05 12:54:56 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,17 +54,17 @@ int	exit_functions_help(char *argv1, int state)
 {
 	if (state == -1)
 	{
-		ex_st(256 + ft_atoi(argv1), 1);
+		exit_status(256 + ft_atoi(argv1), 1);
 		exit(256 + ft_atoi(argv1));
 	}
 	else if (state == 1)
 	{
-		ex_st(ft_atoi(argv1) % 256, 1);
+		exit_status(ft_atoi(argv1) % 256, 1);
 		exit(ft_atoi(argv1) % 256);
 	}
 	else
 	{
-		ex_st(ft_atoi(argv1), 1);
+		exit_status(ft_atoi(argv1), 1);
 		exit(ft_atoi(argv1));
 	}
 }
@@ -73,7 +73,7 @@ int	exit_function(char **argv)
 {
 	printf("exit\n");
 	if (argv[1] == NULL)
-		exit(ex_st(0, 0));
+		exit(exit_status(0, 0));
 	if (is_all_num(argv[1]))
 	{
 		if (argv[2] == NULL)
@@ -81,7 +81,7 @@ int	exit_function(char **argv)
 			if (ft_atoi(argv[1]) == -1 || ft_atoi(argv[1]) == 0)
 			{
 				printf("%s: %s: numeric argument required\n", argv[0], argv[1]);
-				ex_st(255, 1);
+				exit_status(255, 1);
 				exit(255);
 			}
 			if (ft_atoi(argv[1]) < 0)
@@ -95,5 +95,5 @@ int	exit_function(char **argv)
 			return (printf("too many arguments\n"), 1);
 	}
 	printf("%s: %s: numeric argument required\n", argv[0], argv[1]);
-	return (ex_st(255, 1), exit(255), 0);
+	return (exit_status(255, 1), exit(255), 0);
 }

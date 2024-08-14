@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aboukdid <aboukdid@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 04:57:34 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/05 12:56:27 by aboukdid         ###   ########.fr       */
+/*   Updated: 2024/08/11 04:44:20 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,27 @@
 
 void	handle_single_quote(t_expand *exp, int *j)
 {
-	char	*temp;
-	char	*temp1;
-
-	temp = NULL;
 	(*j)++;
 	while (exp->current[*j] && exp->current[*j] != '\'')
-	{
-		temp = ft_substr(exp->current, *j, 1);
-		temp1 = exp->cmd;
-		exp->cmd = ft_strjoin(temp1, temp);
-		free(temp);
-		free(temp1);
-		(*j)++;
-	}
-	if (exp->current[*j] == '\'')
-		(*j)++;
+		noex_single(exp, j);
+	(*j)++;
 }
 
 void	handle_double_quote(t_expand *exp, int *j, t_cmd *lst, t_list *envp)
 {
-	char	*temp1;
 	char	*temp;
 	int		k;
 
 	if (exp->current[*j] == '"')
 		(*j)++;
-	(1) && (temp1 = NULL, temp = NULL, 0);
+	temp = NULL;
 	if (exp->current[*j] == '$' && special_case(exp->current[*j + 1]))
 	{
 		(1) && ((*j)++, k = *j, 0);
 		while (exp->current[*j] && special_case(exp->current[*j]))
 			(*j)++;
 		exp->name = ft_substr(exp->current, k, *j - k);
-		exp->value = get_env_value(exp->name, envp->envs);
+		exp->value = get_env_value_2(exp->name, envp->envs);
 		(1) && (temp = exp->cmd, free(exp->name), 0);
 		(1) && (exp->cmd = ft_strjoin(temp, exp->value), free(temp), 0);
 	}
@@ -69,8 +56,6 @@ void	numeric_expand(t_cmd *lst, t_expand *exp, int *j)
 	lst->ambiguous = 1;
 	temp1 = exp->cmd;
 	exp->cmd = ft_strjoin(exp->cmd, NULL);
-	if (!exp->cmd)
-		exp->cmd = ft_strdup("");
 	free(temp1);
 }
 
@@ -104,6 +89,8 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 	int			k;
 
 	(1) && (exp.cmd = NULL, exp.current = lst->argv[i], j = 0, k = 0, 0);
+	if (lst->fl1 == 1)
+		return (expand_export(lst, envp, i));
 	while (exp.current[j])
 	{
 		if (exp.current[j] == '$' && exp.current[j + 1] == '?')

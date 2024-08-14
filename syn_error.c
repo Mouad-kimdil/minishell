@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 02:44:18 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/07/25 02:46:35 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/14 04:18:29 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	double_red(char *s)
 
 int	is_red(int c)
 {
-	if (c == '>' || c == '<' || c == '|')
+	if (c == '>' || c == '<')
 		return (1);
 	return (0);
 }
@@ -35,8 +35,7 @@ int	last_check(int c)
 
 int	syn_err_chars(int c)
 {
-	if (c == '<' || c == '>' || c == '|' || c == '`'
-		|| c == '(' || c == ')' || c == '#' || c == ';')
+	if (c == '<' || c == '>')
 		return (1);
 	return (0);
 }
