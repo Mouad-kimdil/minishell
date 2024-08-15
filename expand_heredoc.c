@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 01:37:05 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/14 04:43:46 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/15 00:11:49 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,40 @@ char	*handle_other_cases(char *curr, char *cmd, int *j)
 	return (cmd);
 }
 
-void	here_single_quote(t_expand *exp, int *j)
+void	my_free(void *ptr)
 {
-	exp->cmd = ft_strdup(&exp->current[*j]);
-	(*j)++;
-	while (exp->current[*j] && exp->current[*j] != '\'')
-		noex_single(exp, j);
-	exp->cmd = ft_strdup(&exp->current[*j]);
-	(*j)++;
+	if (ptr)
+	{
+		free(ptr);
+		ptr = NULL;
+	}
+}
+
+void	here_quote(t_expand *exp, int *j, t_list *envp)
+{
+	char	*temp;
+	char	*temp1;
+	int		k;
+
+	k = *j;
+	while (exp->current[*j] && exp->current[*j] != '$')
+		(*j)++;
+	temp1 = exp->cmd;
+	temp = ft_substr(exp->current, k, *j - k);
+	exp->cmd = ft_strjoin(temp1, temp);
+	my_free(temp);
+	my_free(temp1);
+	if (exp->current[*j] && exp->current[*j] == '$')
+		(*j)++;
+	k = *j;
+	while (exp->current[*j] && special_case(exp->current[*j]))
+		(*j)++;
+	temp1 = exp->cmd;
+	exp->name = ft_substr(exp->current, k, *j - k);
+	exp->value = get_env_value_2(exp->name, envp->envs);
+	my_free(exp->name);
+	exp->cmd = ft_strjoin(temp1, exp->value);
+	my_free(temp1);
 }
 
 void	here_numeric_expand(t_expand *exp, int *j)
@@ -81,36 +107,6 @@ void	here_numeric_expand(t_expand *exp, int *j)
 	temp1 = exp->cmd;
 	exp->cmd = ft_strjoin(exp->cmd, NULL);
 	free(temp1);
-}
-
-void	here_double_quote(t_expand *exp, int *j, t_list *envp)
-{
-	char	*temp;
-	int		k;
-
-	if (exp->current[*j] == '"')
-		exp->cmd = ft_strdup(&exp->current[*j]);
-	(*j)++;
-	temp = NULL;
-	if (exp->current[*j] == '$' && special_case(exp->current[*j + 1]))
-	{
-		(1) && ((*j)++, k = *j, 0);
-		while (exp->current[*j] && special_case(exp->current[*j]))
-			(*j)++;
-		exp->name = ft_substr(exp->current, k, *j - k);
-		exp->value = get_env_value_2(exp->name, envp->envs);
-		(1) && (temp = exp->cmd, free(exp->name), 0);
-		(1) && (exp->cmd = ft_strjoin(temp, exp->value), free(temp), 0);
-	}
-	else if (exp->current[*j] == '$' && is_number(exp->current[*j + 1]))
-	{
-		if (exp->current[*j + 1])
-			(*j)++;
-		here_numeric_expand(exp, j);
-	}
-	if (exp->current[*j] == '"')
-		exp->cmd = ft_strdup(&exp->current[*j]);
-	(*j)++;
 }
 
 void	here_special_case(t_expand *exp, int *j, t_list *envp)
@@ -150,10 +146,8 @@ char	*expand_cmd_here(char *temp, t_list *envp)
 	{
 		if (exp.current[j] == '$' && exp.current[j + 1] == '?')
 			j++;
-		else if (exp.current[j] == '\'')
-			here_single_quote(&exp, &j);
-		else if (exp.current[j] == '"')
-			here_double_quote(&exp, &j, envp);
+		else if (exp.current[j] == '\'' || exp.current[j] == '"')
+			here_quote(&exp, &j, envp);
 		else if (exp.current[j] == '$' && expand_cases(exp.current[j + 1]))
 			here_special_case(&exp, &j, envp);
 		else if (exp.current[j] == '$' && exp.current[j + 1] == '$')

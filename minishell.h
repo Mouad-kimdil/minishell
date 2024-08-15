@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/14 23:48:04 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,5 +273,6 @@ void	handle_single_quote(t_expand *exp, int *j);
 void	noex_single(t_expand *exp, int *j);
 char	*expand_export(t_cmd *lst, t_list *envp, int i);
 char	*get_env_value_2(char *name, t_env *env);
+void	my_free(void *ptr);
 
 #endif

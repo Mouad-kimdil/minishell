@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 12:07:53 by aboukdid          #+#    #+#             */
-/*   Updated: 2024/08/13 00:36:54 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/15 00:00:23 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	special_case(char c)
 {
-	return (is_ascii(c) || c == '_');
+	return (is_ascii(c) || is_number(c) || c == '_');
 }
 
 int	args_len(char **arg)
