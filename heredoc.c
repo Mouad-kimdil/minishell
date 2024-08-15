@@ -101,18 +101,19 @@ int	heredoc(t_cmd *l, t_list *env)
 
 	while (l)
 	{
-		(1) && (i = -1, get_del(l), 0);
+		i = -1;
+		get_del(l);
 		while (l->del[++i])
 		{
-			(1) && (t = creat_heroc(l), fd = open(t, O_RDONLY), 0);
+			t = creat_heroc(l);
+			fd = open(t, O_RDONLY);
 			unlink(t);
 			if (perferm_heredoc(l, l->del[i], env))
-			{
-				(1) && (fr(l->del), free(t), close(l->fd), close(fd), 0);
-				return (1);
-			}
+				return (fr(l->del), free(t), close(l->fd), close(fd), 1);
 			(l->inf != 0) && (close(l->inf), 0);
-			(1) && (l->inf = fd, close(l->fd), free(t), 0);
+			l->inf = fd;
+			close(l->fd);
+			free(t);
 		}
 		fr(l->del);
 		l = l->next;

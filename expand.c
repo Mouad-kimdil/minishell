@@ -31,9 +31,11 @@ void	check_expanded(t_cmd *lst, int *i, int *tr)
 	if (!ft_strcmp(lst->argv[0], "export"))
 		lst->fl1 = 1;
 	if (lst->argv[*i] && ft_strsearch(lst->argv[*i], '"'))
-		(1) && (*tr = 1, lst->in_quote = 2, 0);
+		*tr = 1;
+		lst->in_quote = 2;
 	if (lst->argv[*i] && ft_strsearch(lst->argv[*i], '\''))
-		(1) && (lst->in_quote = 2, *tr = 2, 0);
+		lst->in_quote = 2;
+		*tr = 2;
 }
 
 void	expand_helper(t_cmd *lst, t_list *envp, int *i, int *tr)
@@ -46,16 +48,28 @@ void	expand_helper(t_cmd *lst, t_list *envp, int *i, int *tr)
 	if (*tr == 1 || *tr == 0)
 	{
 		if (ex && ((ft_strchr(ex, ' ') || ft_strchr(ex, '\t'))) && *tr == 0)
-			(1) && (lst->fl1 = 0, expand_with_space(lst, ex, i), 0);
+		{
+			lst->fl1 = 0;
+			expand_with_space(lst, ex, i);
+		}
 		else
-			(1) && (lst->fl1 = 2, expand_without_space(lst, tr, i, ex), 0);
+		{
+			lst->fl1 = 2;
+			expand_without_space(lst, tr, i, ex);
+		}
 	}
 	if (*tr == 2)
 	{
 		if (ft_strnstr(lst->argv[*i], "$'"))
-			(1) && (free(lst->argv[*i]), lst->argv[*i] = ft_strdup(ex + 1), 0);
+		{
+			free(lst->argv[*i]);
+			lst->argv[*i] = ft_strdup(ex + 1);
+		}
 		else
-			(1) && (free(lst->argv[*i]), lst->argv[*i] = ft_strdup(ex), 0);
+		{
+			free(lst->argv[*i]);
+			lst->argv[*i] = ft_strdup(ex);
+		}
 	}
 	free(ex);
 }
