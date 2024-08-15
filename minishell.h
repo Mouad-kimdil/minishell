@@ -6,7 +6,7 @@
 /*   By: mkimdil <mkimdil@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:50:37 by mkimdil           #+#    #+#             */
-/*   Updated: 2024/08/14 23:48:04 by mkimdil          ###   ########.fr       */
+/*   Updated: 2024/08/15 03:24:22 by mkimdil          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,10 +223,11 @@ char	*unquote(char *input);
 int		count_double(char *input);
 int		count_single(char *input);
 void	put_fd(char *s, int fd);
-char	*handle_dollar_sign(char *curr, char *cmd, int *j, t_list *envp);
-char	*handle_other_cases(char *curr, char *cmd, int *j);
-char	*expand_here_cmd(char *temp, t_list *envp);
+void	here_quote(t_expand *exp, int *j, t_list *envp);
 char	*expand_heredoc(char *temp, t_list *envp, int in);
+char	*expand_cmd_here(char *temp, t_list *envp);
+void	here_special_case(t_expand *exp, int *j, t_list *envp);
+void	here_numeric_expand(t_expand *exp, int *j);
 char	*get_env_value(char *name, t_env *env);
 int		special_case(char c);
 void	expand_with_space(t_cmd *lst, char *expanded, int *i);
@@ -244,8 +245,6 @@ void	remove_quotes_from_arg(char *arg, int in);
 void	remove_quotes_from_arg_helper(char	*arg, char qoutes, int *tr);
 void	free_list(t_list *list);
 int		args_len(char **arg);
-char	**join_args(char **s1, char *expanded);
-char	**join_args_help(char **s1, char **splited, char **res, int i);
 int		special_case(char c);
 void	free_env(char *name, t_env **envps);
 void	free_exp(t_expand *exp);
@@ -258,7 +257,6 @@ t_env	*find_env(t_env *envs, char *key);
 int		heredoc(t_cmd *l, t_list *env);
 void	last_case(t_expand *exp, int *j);
 int		parsing(t_cmd **lst, t_parse *p, t_list *list);
-int		tty_error(t_parse *p);
 void	secure_path(t_list *list);
 void	f_env(t_env *envs);
 void	free_parse(t_parse *p);
