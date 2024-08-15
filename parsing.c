@@ -23,12 +23,11 @@ char	*get_env_value_2(char *name, t_env *env)
 char	*expand_export(t_cmd *lst, t_list *envp, int i)
 {
 	t_expand	exp;
-	int			flag;
 	int			j;
-	int			k;
 
-	(1) && (exp.cmd = NULL, exp.current = lst->argv[i], j = 0, k = 0, 0);
-	flag = 1;
+	exp.cmd = NULL;
+	exp.current = lst->argv[i];
+	j = 0;
 	if (ft_strnstr(exp.current, "=\'"))
 		exp.tr = 1;
 	while (exp.current[j])

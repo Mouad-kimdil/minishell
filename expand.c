@@ -31,11 +31,15 @@ void	check_expanded(t_cmd *lst, int *i, int *tr)
 	if (!ft_strcmp(lst->argv[0], "export"))
 		lst->fl1 = 1;
 	if (lst->argv[*i] && ft_strsearch(lst->argv[*i], '"'))
+	{
 		*tr = 1;
 		lst->in_quote = 2;
+	}
 	if (lst->argv[*i] && ft_strsearch(lst->argv[*i], '\''))
+	{
 		lst->in_quote = 2;
 		*tr = 2;
+	}
 }
 
 void	expand_helper(t_cmd *lst, t_list *envp, int *i, int *tr)
@@ -83,7 +87,6 @@ void	print_av(char **av)
 void	expand(t_cmd *lst, t_list *envp)
 {
 	int		i;
-	char	*tmp;
 	int		tr;
 
 	tr = 0;
@@ -91,7 +94,6 @@ void	expand(t_cmd *lst, t_list *envp)
 	{
 		lst->fl1 = -1;
 		i = 0;
-		tmp = NULL;
 		while (lst->argv[i])
 		{
 			if (lst->is_heredoc)

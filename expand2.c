@@ -65,13 +65,17 @@ char	**append(char **argv, int len)
 			ap.temp = ft_split_2(argv[ap.i]);
 			ap.j = -1;
 			while (ap.temp[++ap.j])
+			{
 				res[ap.k] = ft_strdup(ap.temp[ap.j]);
 				ap.k++;
+			}
 			fr(ap.temp);
 		}
 		else
+		{
 			res[ap.k] = ft_strdup(argv[ap.i]);
 			ap.k++;
+		}
 	}
 	return (res[ap.k] = NULL, fr(argv), res);
 }

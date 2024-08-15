@@ -75,12 +75,10 @@ char	*expand_cmd_here(char *temp, t_list *envp)
 {
 	t_expand	exp;
 	int			j;
-	int			k;
 
 	exp.cmd = NULL;
 	exp.current = temp;
 	j = 0;
-	k = 0;
 	while (exp.current[j])
 	{
 		if (exp.current[j] == '$' && exp.current[j + 1] == '?')

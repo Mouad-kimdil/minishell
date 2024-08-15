@@ -77,12 +77,10 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 {
 	t_expand	exp;
 	int			j;
-	int			k;
 
 	exp.cmd = NULL;
 	exp.current = lst->argv[i];
 	j = 0;
-	k = 0;
 	if (lst->fl1 == 1)
 		return (expand_export(lst, envp, i));
 	while (exp.current[j])
