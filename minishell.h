@@ -12,8 +12,6 @@
 # include <fcntl.h>
 # include <errno.h>
 
-# define BUFFER_SIZE 33
-
 extern int	g_signal_status;
 
 typedef struct s_append

@@ -48,7 +48,8 @@ char	**append(char **argv, int len)
 	t_append	ap;
 	char		**res;
 
-	(1) && (ap.total_len = len, ap.i = -1, 0);
+	ap.total_len = len;
+	ap.i = -1;
 	while (++ap.i < len)
 		if (ft_strchr(argv[ap.i], ' ') || ft_strchr(argv[ap.i], '\t'))
 			ap.total_len += countword_2(argv[ap.i]);
@@ -61,13 +62,16 @@ char	**append(char **argv, int len)
 	{
 		if (ft_strchr(argv[ap.i], ' ') || ft_strchr(argv[ap.i], '\t'))
 		{
-			(1) && (ap.temp = ft_split_2(argv[ap.i]), ap.j = -1, 0);
+			ap.temp = ft_split_2(argv[ap.i]);
+			ap.j = -1;
 			while (ap.temp[++ap.j])
-				(1) && (res[ap.k] = ft_strdup(ap.temp[ap.j]), ap.k++, 0);
+				res[ap.k] = ft_strdup(ap.temp[ap.j]);
+				ap.k++;
 			fr(ap.temp);
 		}
 		else
-			(1) && (res[ap.k] = ft_strdup(argv[ap.i]), ap.k++, 0);
+			res[ap.k] = ft_strdup(argv[ap.i]);
+			ap.k++;
 	}
 	return (res[ap.k] = NULL, fr(argv), res);
 }

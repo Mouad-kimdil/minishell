@@ -86,7 +86,10 @@ void	handle_commands(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 		{
 			my_dup1(node, exec);
 			if (checkbuiltin(node))
-				(1) && (is_builtin(node, list), exit(0), 0);
+			{
+				is_builtin(node, list);
+				exit(0);
+			}
 			if (!node->argv[0])
 				exit(0);
 			free(node->cmd);
@@ -94,7 +97,8 @@ void	handle_commands(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 			if (!node->cmd)
 			{
 				write(2, "minishell: command not found\n", 29);
-				(1) && (exit_status(127, 1), exit(127), 0);
+				exit_status(127, 1);
+				exit(127);
 			}
 			my_execve(node, envr);
 		}
@@ -129,5 +133,7 @@ void	ex(t_cmd *node, t_list *list)
 		node = node->next;
 	}
 	hand_l_command(node, list, &exec, envr);
-	(1) && (close_all(node, &exec), fr(envr), waits(&exec), 0);
+	close_all(node, &exec);
+	fr(envr);
+	waits(&exec);
 }

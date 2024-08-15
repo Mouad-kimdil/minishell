@@ -18,13 +18,16 @@ void	handle_double_quote(t_expand *exp, int *j, t_cmd *lst, t_list *envp)
 	temp = NULL;
 	if (exp->current[*j] == '$' && special_case(exp->current[*j + 1]))
 	{
-		(1) && ((*j)++, k = *j, 0);
+		(*j)++;
+		k = *j;
 		while (exp->current[*j] && special_case(exp->current[*j]))
 			(*j)++;
 		exp->name = ft_substr(exp->current, k, *j - k);
 		exp->value = get_env_value_2(exp->name, envp->envs);
-		(1) && (temp = exp->cmd, free(exp->name), 0);
-		(1) && (exp->cmd = ft_strjoin(temp, exp->value), free(temp), 0);
+		temp = exp->cmd;
+		free(exp->name);
+		exp->cmd = ft_strjoin(temp, exp->value);
+		free(temp);
 	}
 	else if (exp->current[*j] == '$' && is_number(exp->current[*j + 1]))
 	{
@@ -76,7 +79,10 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 	int			j;
 	int			k;
 
-	(1) && (exp.cmd = NULL, exp.current = lst->argv[i], j = 0, k = 0, 0);
+	exp.cmd = NULL;
+	exp.current = lst->argv[i];
+	j = 0;
+	k = 0;
 	if (lst->fl1 == 1)
 		return (expand_export(lst, envp, i));
 	while (exp.current[j])
