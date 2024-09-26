@@ -2,23 +2,23 @@
 
 void	waits(t_execute *exec)
 {
-	int	last_status;
+	// int	last_status;
 	int	status;
 
-	if (waitpid(exec->id, &status, 0) > 0)
+	while (waitpid(exec->id, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
-			last_status = WEXITSTATUS(status);
+			status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			last_status = WTERMSIG(status) + 128;
-		while (wait(&status) != -1)
-		{
-			if (WIFEXITED(status))
-				exit_status(WEXITSTATUS(status), 1);
-			if (WIFSIGNALED(status))
-				exit_status(WTERMSIG(status) + 128, 1);
-		}
-		exit_status(last_status, 1);
+			status = WTERMSIG(status) + 128;
+		// while (wait(&status) != -1)
+		// {
+			// if (WIFEXITED(status))
+			// 	exit_status(WEXITSTATUS(status), 1);
+			// if (WIFSIGNALED(status))
+			// 	exit_status(WTERMSIG(status) + 128, 1);
+		// }
+		exit_status(status, 1);
 	}
 }
 

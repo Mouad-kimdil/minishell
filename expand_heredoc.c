@@ -32,7 +32,7 @@ void	here_quote(t_expand *exp, int *j, t_list *envp)
 		(*j)++;
 	temp1 = exp->cmd;
 	exp->name = ft_substr(exp->current, k, *j - k);
-	exp->value = get_env_value_2(exp->name, envp->envs);
+	exp->value = get_env_value(exp->name, envp->envs);
 	my_free(exp->name);
 	exp->cmd = ft_strjoin(temp1, exp->value);
 	my_free(temp1);
@@ -81,9 +81,7 @@ char	*expand_cmd_here(char *temp, t_list *envp)
 	j = 0;
 	while (exp.current[j])
 	{
-		if (exp.current[j] == '$' && exp.current[j + 1] == '?')
-			j++;
-		else if (exp.current[j] == '\'' || exp.current[j] == '"')
+		if (exp.current[j] == '\'' || exp.current[j] == '"')
 			here_quote(&exp, &j, envp);
 		else if (exp.current[j] == '$' && expand_cases(exp.current[j + 1]))
 			here_special_case(&exp, &j, envp);

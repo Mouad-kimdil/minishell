@@ -23,7 +23,7 @@ void	handle_double_quote(t_expand *exp, int *j, t_cmd *lst, t_list *envp)
 		while (exp->current[*j] && special_case(exp->current[*j]))
 			(*j)++;
 		exp->name = ft_substr(exp->current, k, *j - k);
-		exp->value = get_env_value_2(exp->name, envp->envs);
+		exp->value = get_env_value(exp->name, envp->envs);
 		temp = exp->cmd;
 		free(exp->name);
 		exp->cmd = ft_strjoin(temp, exp->value);
@@ -73,6 +73,19 @@ void	handle_special_case(t_expand *exp, int *j, t_cmd *lst, t_list *envp)
 	}
 }
 
+void	ret_val(t_expand *exp, int *j)
+{
+	char	*temp;
+	char	*temp1;
+
+	temp = exp->cmd;
+	(*j) += 2;
+	temp1 = ft_itoa(exit_status(0, 0));
+	exp->cmd = ft_strjoin(exp->cmd, temp1);
+	free(temp);
+	free(temp1);
+}
+
 char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 {
 	t_expand	exp;
@@ -86,7 +99,7 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 	while (exp.current[j])
 	{
 		if (exp.current[j] == '$' && exp.current[j + 1] == '?')
-			j++;
+			ret_val(&exp, &j);
 		else if (exp.current[j] == '\'')
 			handle_single_quote(&exp, &j);
 		else if (exp.current[j] == '"')
