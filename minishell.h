@@ -256,7 +256,6 @@ char	**append(char **argv, int len);
 void	handle_single_quote(t_expand *exp, int *j);
 void	noex_single(t_expand *exp, int *j);
 char	*expand_export(t_cmd *lst, t_list *envp, int i);
-char	*get_env_value_2(char *name, t_env *env);
 void	my_free(void *ptr);
 
 #endif

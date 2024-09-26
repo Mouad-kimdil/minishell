@@ -26,13 +26,13 @@ int	print_arguments(char **argv, int start)
 	i = start;
 	while (argv[i])
 	{
-		if (!ft_strcmp(argv[i], "?"))
-		{
-			ft_putnbr_fd(exit_status(0, 0), 1);
-			ft_putchar_fd('\n', 1);
-			exit_status(0, 1);
-			return (0);
-		}
+		// if (!ft_strcmp(argv[i], "?"))
+		// {
+		// 	ft_putnbr_fd(exit_status(0, 0), 1);
+		// 	ft_putchar_fd('\n', 1);
+		// 	exit_status(0, 1);
+		// 	return (0);
+		// }
 		write(1, argv[i], ft_strlen(argv[i]));
 		if (argv[i + 1])
 			write(1, " ", 1);
