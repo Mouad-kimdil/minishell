@@ -20,7 +20,7 @@ int	is_rdr(char *arg)
 	return (0);
 }
 
-int	checking_ambigious(t_cmd *node)
+int	checking_ambiguous(t_cmd *node)
 {
 	t_cmd	*tmp;
 	int		o;

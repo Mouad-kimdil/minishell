@@ -34,6 +34,7 @@ int	check(char *my_argv)
 		else
 		{
 			msg_error("minishell");
+			exit_status(126, 1);
 			exit(126);
 		}
 	}
@@ -61,14 +62,14 @@ char	*command(char *my_argv, char **envr)
 		command_path = ft_strjoin(joiner, my_argv);
 		free(joiner);
 		if (access(command_path, F_OK | X_OK) == 0)
-			return (fr(path), command_path);
+			return (free_str_array(path), command_path);
 		free(command_path);
 		i++;
 	}
-	return (fr(path), NULL);
+	return (free_str_array(path), NULL);
 }
 
-void	fr(char **arr)
+void	free_str_array(char **arr)
 {
 	int	i;
 

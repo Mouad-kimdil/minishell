@@ -86,7 +86,7 @@ char	*expand_cmd_here(char *temp, t_list *envp)
 		else if (exp.current[j] == '$' && expand_cases(exp.current[j + 1]))
 			here_special_case(&exp, &j, envp);
 		else if (exp.current[j] == '$' && exp.current[j + 1] == '$')
-			dolar_dolar_case(&exp, &j);
+			dollar_dollar_case(&exp, &j);
 		else if (exp.current[j] == '$' && exp.current[j + 1] == '"')
 			j++;
 		else

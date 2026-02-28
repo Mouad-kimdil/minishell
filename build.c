@@ -4,7 +4,7 @@ void	free_parse(t_parse *p)
 {
 	if (!p)
 		return ;
-	fr(p->res);
+	free_str_array(p->res);
 	free(p->str);
 	free(p->temp);
 }
@@ -66,7 +66,7 @@ t_cmd	*build_arr(char **res)
 	{
 		node = ft_new(res[i]);
 		if (!node)
-			return (fr(res), NULL);
+			return (free_str_array(res), NULL);
 		add_back(&head, node);
 		i++;
 	}

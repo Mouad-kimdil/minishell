@@ -27,7 +27,7 @@ char	*expand_export(t_cmd *lst, t_list *envp, int i)
 			&& exp.tr != 1)
 			handle_special_case(&exp, &j, lst, envp);
 		else if (exp.current[j] == '$' && exp.current[j + 1] == '$')
-			dolar_dolar_case(&exp, &j);
+			dollar_dollar_case(&exp, &j);
 		else
 			last_case(&exp, &j);
 	}
@@ -48,14 +48,14 @@ int	syn_error(char *line)
 		if ((res[i][0] == '>' || res[i][0] == '<'
 			|| double_red(res[i]))
 			&& (!res[i + 1] || syn_err_chars(res[i + 1][0])))
-			return (fr(res), put_fd("Minishell: syntax error\n", 2), 1);
+			return (free_str_array(res), put_fd("Minishell: syntax error\n", 2), 1);
 		if (res[0][0] == '|')
-			return (fr(res), put_fd("Minishell: syntax error\n", 2), 1);
-		if (is_red(res[i][0]) && syn_err_chars(res[i + 1][0]))
-			return (fr(res), put_fd("Minishell: syntax error\n", 2), 1);
+			return (free_str_array(res), put_fd("Minishell: syntax error\n", 2), 1);
+		if (is_red(res[i][0]) && res[i + 1] && syn_err_chars(res[i + 1][0]))
+			return (free_str_array(res), put_fd("Minishell: syntax error\n", 2), 1);
 		if (res[i][0] == '|' && !res[i + 1])
-			return (fr(res), put_fd("Minishell: synatx error\n", 2), 1);
+			return (free_str_array(res), put_fd("Minishell: syntax error\n", 2), 1);
 		i++;
 	}
-	return (fr(res), 0);
+	return (free_str_array(res), 0);
 }

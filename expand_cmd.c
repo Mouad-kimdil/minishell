@@ -4,7 +4,7 @@ void	handle_single_quote(t_expand *exp, int *j)
 {
 	(*j)++;
 	while (exp->current[*j] && exp->current[*j] != '\'')
-		noex_single(exp, j);
+		noexpand_single_quote(exp, j);
 	(*j)++;
 }
 
@@ -94,7 +94,7 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 	exp.cmd = NULL;
 	exp.current = lst->argv[i];
 	j = 0;
-	if (lst->fl1 == 1)
+	if (lst->expand_state == 1)
 		return (expand_export(lst, envp, i));
 	while (exp.current[j])
 	{
@@ -107,7 +107,7 @@ char	*expand_cmd(t_cmd *lst, t_list *envp, int i)
 		else if (exp.current[j] == '$' && expand_cases(exp.current[j + 1]))
 			handle_special_case(&exp, &j, lst, envp);
 		else if (exp.current[j] == '$' && exp.current[j + 1] == '$')
-			dolar_dolar_case(&exp, &j);
+			dollar_dollar_case(&exp, &j);
 		else if (exp.current[j] == '$' && exp.current[j + 1] == '"')
 			j++;
 		else

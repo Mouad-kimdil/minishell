@@ -5,7 +5,7 @@ int	redirect_out_append(t_cmd *node, int *index, int flags)
 	int		j;
 	char	*str;
 
-	if (checking_ambigious(node) == 1)
+	if (checking_ambiguous(node) == 1)
 		return (1);
 	if (node->argv[*index + 1])
 	{
@@ -34,7 +34,7 @@ int	redirect_in(t_cmd *node, int *index, int flags)
 	int		j;
 	char	*str;
 
-	if (checking_ambigious(node) == 1)
+	if (checking_ambiguous(node) == 1)
 		return (1);
 	if (node->argv[*index + 1])
 	{
@@ -63,7 +63,7 @@ int	redirect_out(t_cmd *node, int *index, int flags)
 	int		j;
 	char	*str;
 
-	if (checking_ambigious(node) == 1)
+	if (checking_ambiguous(node) == 1)
 		return (1);
 	if (node->argv[*index + 1])
 	{

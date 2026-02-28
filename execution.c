@@ -2,24 +2,24 @@
 
 void	waits(t_execute *exec)
 {
-	// int	last_status;
-	int	status;
+	int		status;
+	int		last_status;
+	pid_t	reaped;
 
-	while (waitpid(exec->id, &status, 0) > 0)
+	last_status = 0;
+	while (1)
 	{
+		reaped = waitpid(-1, &status, 0);
+		if (reaped <= 0)
+			break ;
 		if (WIFEXITED(status))
 			status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			status = WTERMSIG(status) + 128;
-		// while (wait(&status) != -1)
-		// {
-			// if (WIFEXITED(status))
-			// 	exit_status(WEXITSTATUS(status), 1);
-			// if (WIFSIGNALED(status))
-			// 	exit_status(WTERMSIG(status) + 128, 1);
-		// }
-		exit_status(status, 1);
+		if (reaped == exec->id)
+			last_status = status;
 	}
+	exit_status(last_status, 1);
 }
 
 void	my_execve(t_cmd *node, char **envr)
@@ -47,21 +47,28 @@ void	my_execve(t_cmd *node, char **envr)
 	}
 }
 
-void	hand_l_command(t_cmd *node, t_list *list, t_execute *exec, char **envr)
+void	handle_last_command(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 {
+	int	st;
+
 	if (!check_for_redirection(node))
 	{
 		exec->id = safe_fork();
 		if (exec->id == 0)
 		{
-			my_dup2(node);
-			if (is_builtin(node, list))
+			reset_signals_child();
+			apply_redirs(node);
+			if (!node->argv[0])
 			{
 				close_all(node, exec);
 				exit(0);
 			}
-			if (!node->argv[0])
-				exit(0);
+			st = is_builtin(node, list);
+			if (st >= 0)
+			{
+				close_all(node, exec);
+				exit(st);
+			}
 			free(node->cmd);
 			node->cmd = command(node->argv[0], envr);
 			if (!node->cmd || !ft_strcmp(node->cmd, ".."))
@@ -77,6 +84,8 @@ void	hand_l_command(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 
 void	handle_commands(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 {
+	int	st;
+
 	if (pipe(exec->fd) == -1)
 		msg_error("pipe");
 	if (!check_for_redirection(node))
@@ -84,14 +93,16 @@ void	handle_commands(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 		exec->id = safe_fork();
 		if (!exec->id)
 		{
-			my_dup1(node, exec);
-			if (checkbuiltin(node))
-			{
-				is_builtin(node, list);
-				exit(0);
-			}
+			reset_signals_child();
+			apply_redirs_and_pipe_out(node, exec);
 			if (!node->argv[0])
 				exit(0);
+			if (checkbuiltin(node))
+			{
+				st = is_builtin(node, list);
+				if (st >= 0)
+					exit(st);
+			}
 			free(node->cmd);
 			node->cmd = command(node->argv[0], envr);
 			if (!node->cmd)
@@ -107,17 +118,17 @@ void	handle_commands(t_cmd *node, t_list *list, t_execute *exec, char **envr)
 	}
 }
 
-void	ex(t_cmd *node, t_list *list)
+void	execute_pipeline(t_cmd *node, t_list *list)
 {
 	char		**envr;
 	t_execute	exec;
 
-	exec.fd_int = dup(0);
-	exec.fd_out = dup(1);
+	exec.saved_stdin = dup(0);
+	exec.saved_stdout = dup(1);
 	envr = env_to_char_array(list->envs);
 	if (check_if_built(node, list, &exec))
 	{
-		fr(envr);
+		free_str_array(envr);
 		return ;
 	}
 	while (node->next)
@@ -132,8 +143,8 @@ void	ex(t_cmd *node, t_list *list)
 		close((&exec)->fd[0]);
 		node = node->next;
 	}
-	hand_l_command(node, list, &exec, envr);
+	handle_last_command(node, list, &exec, envr);
 	close_all(node, &exec);
-	fr(envr);
+	free_str_array(envr);
 	waits(&exec);
 }

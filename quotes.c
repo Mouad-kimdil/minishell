@@ -24,7 +24,7 @@ int	handle_single_double(char *line)
 	return (0);
 }
 
-void	change_to_garb(char *line)
+void	mask_quoted_chars(char *line)
 {
 	int		i;
 	int		tr;
@@ -57,11 +57,11 @@ void	back_to_ascii(t_cmd *lst)
 
 	while (lst)
 	{
-		change_to_garb(lst->cmd);
+		mask_quoted_chars(lst->cmd);
 		i = 0;
 		while (lst->argv[i])
 		{
-			change_to_garb(lst->argv[i]);
+			mask_quoted_chars(lst->argv[i]);
 			i++;
 		}
 		lst = lst->next;

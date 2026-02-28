@@ -2,6 +2,31 @@
 
 int	g_signal_status;
 
+/* Run a single pipeline string (may contain |). Returns exit status or -1 on error. */
+static int	run_pipeline_string(char *pipe_str, t_list *list)
+{
+	char	**res;
+	t_cmd	*lst;
+	int		status;
+
+	res = ft_split(pipe_str, '|');
+	if (!res)
+		return (-1);
+	lst = build_arr(res);
+	if (!lst)
+		return (free_str_array(res), -1);
+	back_to_ascii(lst);
+	if (is_heredoc(lst) && heredoc(lst, list))
+		return (f_cmd(&lst), free_str_array(res), -1);
+	expand(lst, list);
+	remove_quotes(&lst);
+	execute_pipeline(lst, list);
+	status = exit_status(0, 0);
+	f_cmd(&lst);
+	free_str_array(res);
+	return (status);
+}
+
 void	secure_path(t_list *list)
 {
 	char	*path;
@@ -59,27 +84,79 @@ void	print_list(t_cmd *lst)
 
 int	parsing(t_cmd **lst, t_parse *p, t_list *list)
 {
+	char	**or_parts;
+	char	**and_parts;
+	int		i;
+	int		j;
+	int		status;
+	int		success;
+	struct termios	copy;
+
 	p->str = add_space(p->temp);
 	if (!p->str)
 		return (free(p->temp), 1);
-	change_to_garb(p->str);
+	mask_quoted_chars(p->str);
 	if (handle_single_double(p->str))
 		return (free(p->temp), free(p->str), 1);
 	if (syn_error(p->str))
 		return (exit_status(258, 1), free(p->temp), free(p->str), 1);
-	p->res = ft_split(p->str, '|');
-	if (!p->res)
-		return (free(p->temp), free(p->str), 1);
-	*lst = build_arr(p->res);
-	if (!*lst)
-		return (free(p->temp), free(p->str), fr(p->res), 1);
-	back_to_ascii(*lst);
-	if (is_heredoc(*lst))
-		if (heredoc(*lst, list))
-			return (free_parse(p), f_cmd(lst), 1);
-	expand(*lst, list);
-	remove_qoutes(lst);
-	return (free_parse(p), 0);
+	or_parts = split_by_delim(p->str, " || ");
+	if (!or_parts)
+		return (free_parse(p), 1);
+	if (or_parts[0] && !or_parts[1])
+	{
+		and_parts = split_by_delim(or_parts[0], " && ");
+		if (and_parts && and_parts[0] && !and_parts[1])
+		{
+			p->res = ft_split(or_parts[0], '|');
+			free_str_array(and_parts);
+			free_str_array(or_parts);
+			if (!p->res)
+				return (free_parse(p), 1);
+			*lst = build_arr(p->res);
+			if (!*lst)
+				return (free_parse(p), 1);
+			back_to_ascii(*lst);
+			if (is_heredoc(*lst) && heredoc(*lst, list))
+				return (free_parse(p), f_cmd(lst), 1);
+			expand(*lst, list);
+			remove_quotes(lst);
+			return (free_parse(p), 0);
+		}
+		if (and_parts)
+			free_str_array(and_parts);
+	}
+	status = 0;
+	g_signal_status = 1;
+	tcgetattr(0, &copy);
+	for (i = 0; or_parts[i]; i++)
+	{
+		and_parts = split_by_delim(or_parts[i], " && ");
+		if (!and_parts)
+			continue ;
+		success = 1;
+		for (j = 0; and_parts[j]; j++)
+		{
+			status = run_pipeline_string(and_parts[j], list);
+			if (status < 0)
+				return (free_str_array(and_parts), free_str_array(or_parts), tcsetattr(0, 0, &copy), g_signal_status = 0, (p->res = NULL, free_parse(p)), 1);
+			if (status != 0)
+			{
+				success = 0;
+				break ;
+			}
+		}
+		free_str_array(and_parts);
+		if (success)
+			break ;
+	}
+	tcsetattr(0, 0, &copy);
+	g_signal_status = 0;
+	free_str_array(or_parts);
+	p->res = NULL;
+	free_parse(p);
+	*lst = NULL;
+	return (0);
 }
 
 int	main(int ac, char **av, char **env)
@@ -114,12 +191,15 @@ int	main(int ac, char **av, char **env)
 		add_history(p.temp);
 		if (parsing(&lst, &p, l))
 			continue ;
-		g_signal_status = 1;
-		tcgetattr(0, &copy);
-		ex(lst, l);
-		tcsetattr(0, 0, &copy);
-		g_signal_status = 0;
-		f_cmd(&lst);
+		if (lst)
+		{
+			g_signal_status = 1;
+			tcgetattr(0, &copy);
+			execute_pipeline(lst, l);
+			tcsetattr(0, 0, &copy);
+			g_signal_status = 0;
+			f_cmd(&lst);
+		}
 	}
 	return (f_env(l->envs), free(l), 0);
 }

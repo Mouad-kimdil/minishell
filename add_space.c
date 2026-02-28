@@ -16,15 +16,13 @@ int	count_num_of_special(char *line)
 	{
 		if ((line[i] == '<' && line[i + 1] == '<')
 			|| (line[i] == '>' && line[i + 1] == '>'))
-		{
-			count++;
-			i += 2;
-		}
+			count++, i += 2;
+		else if (line[i] == '|' && line[i + 1] == '|')
+			count++, i += 2;
+		else if (line[i] == '&' && line[i + 1] == '&')
+			count++, i += 2;
 		else if (is_special_char(line[i]))
-		{
-			count++;
-			i++;
-		}
+			count++, i++;
 		else
 			i++;
 	}
@@ -55,6 +53,14 @@ char	*add_space(char *line)
 		if ((line[i] == '<' && line[i + 1] == '<')
 			|| (line[i] == '>' && line[i + 1] == '>'))
 			second_case(str, line, &i, &j);
+		else if (line[i] == '|' && line[i + 1] == '|')
+		{
+			str[j++] = ' ', str[j++] = line[i++], str[j++] = line[i++], str[j++] = ' ';
+		}
+		else if (line[i] == '&' && line[i + 1] == '&')
+		{
+			str[j++] = ' ', str[j++] = line[i++], str[j++] = line[i++], str[j++] = ' ';
+		}
 		else if (is_special_char(line[i]))
 		{
 			str[j++] = ' ';

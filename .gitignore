@@ -1,0 +1,9 @@
+# Build
+minishell
+obj/
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo
+*~

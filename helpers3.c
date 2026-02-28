@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	my_dup1(t_cmd *node, t_execute *exec)
+void	apply_redirs_and_pipe_out(t_cmd *node, t_execute *exec)
 {
 	if (node->inf != 0)
 	{
@@ -23,7 +23,7 @@ void	my_dup1(t_cmd *node, t_execute *exec)
 	}
 }
 
-void	my_dup2(t_cmd *node)
+void	apply_redirs(t_cmd *node)
 {
 	if (node->inf != 0)
 	{

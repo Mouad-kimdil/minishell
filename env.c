@@ -61,7 +61,7 @@ t_env	*env_init(char **envp)
 				break ;
 			ft_lstadd_back(&head, new);
 		}
-		fr(sp);
+		free_str_array(sp);
 		i++;
 	}
 	return (head);
@@ -87,7 +87,7 @@ void	env(char **argv, t_list *list)
 	exit_status(0, 1);
 }
 
-void	env_1(char **argv, t_env *list, int outfile)
+void	env_print_to_fd(char **argv, t_env *list, int outfile)
 {
 	(void) *argv;
 	while (list)

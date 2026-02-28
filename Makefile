@@ -1,4 +1,4 @@
-SRCS = Minishell.c parsing.c split.c strings.c error.c add_space.c qoutes.c \
+SRCS = Minishell.c parsing.c split.c strings.c error.c add_space.c quotes.c \
 		build.c expand.c cd.c echo.c env.c exec_helper.c execution.c exit.c export_helper1.c export_helpers.c export.c \
 		libft.c linked_list.c pwd.c unset.c utils.c redirections.c helpers.c helpers1.c \
 		heredoc.c expand_heredoc.c libc.c redir_helpers.c strings1.c helpers2.c helpers3.c helpers4.c signals.c ft_itoa.c \
@@ -6,11 +6,17 @@ SRCS = Minishell.c parsing.c split.c strings.c error.c add_space.c qoutes.c \
 INC = minishell.h
 NAME = minishell
 CC = cc
-READLINE_PREFIX = $(shell brew --prefix readline)
-READLINE_INCLUDE = $(READLINE_PREFIX)/include
-READLINE_LIB = $(READLINE_PREFIX)/lib
-LIBS = -L$(READLINE_LIB) -lreadline
-INCLUDES = -I$(READLINE_INCLUDE)
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	READLINE_PREFIX := $(shell brew --prefix readline 2>/dev/null)
+	READLINE_INCLUDE := $(READLINE_PREFIX)/include
+	READLINE_LIB := $(READLINE_PREFIX)/lib
+	INCLUDES := -I$(READLINE_INCLUDE)
+	LIBS := -L$(READLINE_LIB) -lreadline
+else
+	INCLUDES :=
+	LIBS := -lreadline
+endif
 FLAGS = -Wall -Wextra -Werror
 OBJS = $(addprefix obj/, $(SRCS:.c=.o))
 

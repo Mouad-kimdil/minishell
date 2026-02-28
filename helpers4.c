@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	her_sin(int sig)
+void	heredoc_sigint(int sig)
 {
 	if (sig == SIGINT)
 	{

@@ -66,12 +66,6 @@ int	exit_function(char **argv)
 	{
 		if (argv[2] == NULL)
 		{
-			if (ft_atoi(argv[1]) == -1 || ft_atoi(argv[1]) == 0)
-			{
-				printf("%s: %s: numeric argument required\n", argv[0], argv[1]);
-				exit_status(255, 1);
-				exit(255);
-			}
 			if (ft_atoi(argv[1]) < 0)
 				exit_functions_help(argv[1], -1);
 			else if (ft_atoi(argv[1]) > 255)

@@ -87,3 +87,92 @@ char	**ft_split(char *s, char c)
 	len = 0;
 	return (ft_help(s, c, len, final));
 }
+
+/* Find first occurrence of delim in s; returns offset or -1. */
+static int	find_delim(char *s, char *delim)
+{
+	int	i;
+	int	j;
+	int	len;
+
+	len = ft_strlen(delim);
+	if (!len || !s)
+		return (-1);
+	i = 0;
+	while (s[i])
+	{
+		j = 0;
+		while (delim[j] && s[i + j] == delim[j])
+			j++;
+		if (delim[j] == '\0')
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+/* Count non-overlapping occurrences of delim in s. */
+static int	count_delim(char *s, char *delim)
+{
+	int	count;
+	int	len;
+	int	pos;
+	int	off;
+
+	len = ft_strlen(delim);
+	if (!len || !s)
+		return (0);
+	count = 0;
+	pos = 0;
+	while (s[pos])
+	{
+		off = find_delim(s + pos, delim);
+		if (off < 0)
+			break ;
+		count++;
+		pos += off + len;
+	}
+	return (count);
+}
+
+/* Split s by substring delim; returns NULL-terminated array (caller frees with free_str_array()). */
+char	**split_by_delim(char *s, char *delim)
+{
+	char	**out;
+	int		n;
+	int		k;
+	int		pos;
+	int		off;
+	int		seglen;
+	int		len;
+
+	if (!s || !delim)
+		return (NULL);
+	len = ft_strlen(delim);
+	n = count_delim(s, delim);
+	out = malloc((n + 2) * sizeof(char *));
+	if (!out)
+		return (NULL);
+	k = 0;
+	pos = 0;
+	while (k <= n)
+	{
+		off = find_delim(s + pos, delim);
+		if (off < 0)
+			seglen = ft_strlen(s + pos);
+		else
+			seglen = off;
+		out[k] = ft_strndup(s + pos, seglen);
+		if (!out[k])
+		{
+			ft_free(out, k - 1);
+			return (NULL);
+		}
+		k++;
+		pos += seglen;
+		if (off >= 0)
+			pos += len;
+	}
+	out[k] = NULL;
+	return (out);
+}

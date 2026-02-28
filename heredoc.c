@@ -29,7 +29,7 @@ void	get_del(t_cmd *lst)
 	lst->del[k] = NULL;
 }
 
-char	*creat_heroc(t_cmd *lst)
+char	*create_heredoc(t_cmd *lst)
 {
 	int		i;
 	char	*tmp;
@@ -55,7 +55,7 @@ char	*creat_heroc(t_cmd *lst)
 	return (NULL);
 }
 
-void	perferm_heredoc_help(int fd, char *exp)
+void	perform_heredoc_help(int fd, char *exp)
 {
 	if (exp)
 	{
@@ -65,21 +65,18 @@ void	perferm_heredoc_help(int fd, char *exp)
 	}
 }
 
-int	perferm_heredoc(t_cmd *lst, char *del, t_list *env)
+int	perform_heredoc(t_cmd *lst, char *del, t_list *env)
 {
 	char	*exp;
 	char	*tmp;
-	(void)	*env;
+
+	(void)env;
 	while (1)
 	{
-		signal(SIGINT, her_sin);
+		signal(SIGINT, heredoc_sigint);
 		tmp = readline("> ");
 		if (!ttyname(0))
-		{
-			close(lst->inf);
-			open(ttyname(2), O_RDWR);
 			return (free(tmp), 1);
-		}
 		if (!tmp || ((ft_strncmp(tmp, del, ft_strlen(del)) == 0)
 				&& (ft_strlen(tmp) == ft_strlen(del))))
 		{
@@ -88,7 +85,7 @@ int	perferm_heredoc(t_cmd *lst, char *del, t_list *env)
 		}
 		exp = expand_heredoc(tmp, env, lst->in_quote);
 		free(tmp);
-		perferm_heredoc_help(lst->fd, exp);
+		perform_heredoc_help(lst->fd, exp);
 	}
 	return (0);
 }
@@ -105,17 +102,17 @@ int	heredoc(t_cmd *l, t_list *env)
 		get_del(l);
 		while (l->del[++i])
 		{
-			t = creat_heroc(l);
+			t = create_heredoc(l);
 			fd = open(t, O_RDONLY);
 			unlink(t);
-			if (perferm_heredoc(l, l->del[i], env))
-				return (fr(l->del), free(t), close(l->fd), close(fd), 1);
+			if (perform_heredoc(l, l->del[i], env))
+				return (free_str_array(l->del), free(t), close(l->fd), close(fd), 1);
 			(l->inf != 0) && (close(l->inf), 0);
 			l->inf = fd;
 			close(l->fd);
 			free(t);
 		}
-		fr(l->del);
+		free_str_array(l->del);
 		l = l->next;
 	}
 	return (0);

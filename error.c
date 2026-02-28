@@ -64,7 +64,7 @@ void	f_cmd(t_cmd **lst)
 	{
 		next = (*lst)->next;
 		free((*lst)->cmd);
-		fr((*lst)->argv);
+		free_str_array((*lst)->argv);
 		free(*lst);
 		*lst = next;
 	}

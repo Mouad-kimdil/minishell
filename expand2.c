@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	noex_single(t_expand *exp, int *j)
+void	noexpand_single_quote(t_expand *exp, int *j)
 {
 	char	*temp;
 	char	*temp1;
@@ -16,7 +16,7 @@ void	noex_single(t_expand *exp, int *j)
 	}
 }
 
-void	dolar_dolar_case(t_expand *exp, int *j)
+void	dollar_dollar_case(t_expand *exp, int *j)
 {
 	char	*temp;
 
@@ -69,7 +69,7 @@ char	**append(char **argv, int len)
 				res[ap.k] = ft_strdup(ap.temp[ap.j]);
 				ap.k++;
 			}
-			fr(ap.temp);
+			free_str_array(ap.temp);
 		}
 		else
 		{
@@ -77,5 +77,5 @@ char	**append(char **argv, int len)
 			ap.k++;
 		}
 	}
-	return (res[ap.k] = NULL, fr(argv), res);
+	return (res[ap.k] = NULL, free_str_array(argv), res);
 }
