@@ -88,7 +88,6 @@ char	**ft_split(char *s, char c)
 	return (ft_help(s, c, len, final));
 }
 
-/* Find first occurrence of delim in s; returns offset or -1. */
 static int	find_delim(char *s, char *delim)
 {
 	int	i;
@@ -111,7 +110,6 @@ static int	find_delim(char *s, char *delim)
 	return (-1);
 }
 
-/* Count non-overlapping occurrences of delim in s. */
 static int	count_delim(char *s, char *delim)
 {
 	int	count;
@@ -135,7 +133,6 @@ static int	count_delim(char *s, char *delim)
 	return (count);
 }
 
-/* Split s by substring delim; returns NULL-terminated array (caller frees with free_str_array()). */
 char	**split_by_delim(char *s, char *delim)
 {
 	char	**out;
@@ -175,4 +172,69 @@ char	**split_by_delim(char *s, char *delim)
 	}
 	out[k] = NULL;
 	return (out);
+}
+
+int	is_whitespace(int c)
+{
+	return (c == ' ' || c == '\t');
+}
+
+int	countword_2(char *s)
+{
+	int	count;
+
+	count = 0;
+	if (!s)
+		return (0);
+	while (*s)
+	{
+		if (!is_whitespace(*s))
+		{
+			count++;
+			while (*s && !is_whitespace(*s))
+				s++;
+		}
+		else
+			s++;
+	}
+	return (count);
+}
+
+char	**ft_help_2(char *s, int len, char **final)
+{
+	char	*start;
+	int		i;
+
+	len = countword_2(s);
+	final = (char **)malloc((len + 1) * sizeof(char *));
+	if (!final)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		while (is_whitespace(*s))
+			s++;
+		start = (char *)s;
+		while (*s && !is_whitespace(*s))
+			s++;
+		final[i] = ft_strndup(start, s - start);
+		if (!final[i])
+		{
+			ft_free(final, i);
+			return (NULL);
+		}
+		i++;
+	}
+	final[i] = NULL;
+	return (final);
+}
+
+char	**ft_split_2(char *s)
+{
+	int		len;
+	char	**final;
+
+	final = NULL;
+	len = 0;
+	return (ft_help_2(s, len, final));
 }

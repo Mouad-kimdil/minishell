@@ -72,3 +72,15 @@ t_cmd	*build_arr(char **res)
 	}
 	return (head);
 }
+
+t_cmd	*new_list(void *cmd)
+{
+	t_cmd	*ptr;
+
+	ptr = (t_cmd *)malloc(sizeof(t_cmd));
+	if (!ptr)
+		return (NULL);
+	ptr->cmd = cmd;
+	ptr->next = NULL;
+	return (ptr);
+}

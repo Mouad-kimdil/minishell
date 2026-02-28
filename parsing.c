@@ -1,5 +1,132 @@
 #include "minishell.h"
 
+int	double_red(char *s)
+{
+	if (!ft_strcmp(s, "<<") || !ft_strcmp(s, ">>"))
+		return (1);
+	return (0);
+}
+
+int	is_red(int c)
+{
+	if (c == '>' || c == '<')
+		return (1);
+	return (0);
+}
+
+int	last_check(int c)
+{
+	if (c == '`' || c == '(' || c == ')')
+		return (1);
+	return (0);
+}
+
+int	syn_err_chars(int c)
+{
+	if (c == '<' || c == '>')
+		return (1);
+	return (0);
+}
+
+int	check_line(char **res)
+{
+	int	i;
+	int	j;
+	int	tr;
+
+	i = 0;
+	tr = 0;
+	while (res[i])
+	{
+		j = 0;
+		tr = 0;
+		while (res[i][j])
+		{
+			if (res[i][j] == '<')
+				tr++;
+			j++;
+		}
+		if (tr > 2)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	is_special_char(char c)
+{
+	return (c == '|' || c == '<' || c == '>');
+}
+
+int	count_num_of_special(char *line)
+{
+	int	count;
+	int	i;
+
+	count = 0;
+	i = 0;
+	while (line[i])
+	{
+		if ((line[i] == '<' && line[i + 1] == '<')
+			|| (line[i] == '>' && line[i + 1] == '>'))
+			count++, i += 2;
+		else if (line[i] == '|' && line[i + 1] == '|')
+			count++, i += 2;
+		else if (line[i] == '&' && line[i + 1] == '&')
+			count++, i += 2;
+		else if (is_special_char(line[i]))
+			count++, i++;
+		else
+			i++;
+	}
+	return (count);
+}
+
+void	second_case(char *str, char *line, int *i, int *j)
+{
+	str[(*j)++] = ' ';
+	str[(*j)++] = line[(*i)++];
+	str[(*j)++] = line[(*i)++];
+	str[(*j)++] = ' ';
+}
+
+char	*add_space(char *line)
+{
+	int		i;
+	int		j;
+	char	*str;
+
+	i = 0;
+	j = 0;
+	str = malloc(ft_strlen(line) + count_num_of_special(line) * 2 + 1);
+	if (!str)
+		return (NULL);
+	while (line[i])
+	{
+		if ((line[i] == '<' && line[i + 1] == '<')
+			|| (line[i] == '>' && line[i + 1] == '>'))
+			second_case(str, line, &i, &j);
+		else if (line[i] == '|' && line[i + 1] == '|')
+		{
+			str[j++] = ' ', str[j++] = line[i++], str[j++] = line[i++], str[j++] = ' ';
+		}
+		else if (line[i] == '&' && line[i + 1] == '&')
+		{
+			str[j++] = ' ', str[j++] = line[i++], str[j++] = line[i++], str[j++] = ' ';
+		}
+		else if (is_special_char(line[i]))
+		{
+			str[j++] = ' ';
+			str[j++] = line[i++];
+			str[j++] = ' ';
+		}
+		else
+			str[j++] = line[i++];
+	}
+	str[j] = '\0';
+	return (str);
+}
+
 void	my_free(void *ptr)
 {
 	if (ptr)

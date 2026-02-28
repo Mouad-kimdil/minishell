@@ -9,7 +9,6 @@ int	exit_status(int status, int mode)
 	return (num);
 }
 
-/* Returns builtin exit status (0-255), or -1 if not a builtin. */
 int	is_builtin(t_cmd *cmd, t_list *list)
 {
 	if (!ft_strcmp(cmd->argv[0], "echo"))

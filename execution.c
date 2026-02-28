@@ -1,5 +1,151 @@
 #include "minishell.h"
 
+void	close_files(t_cmd *node)
+{
+	if (node->inf != 0)
+		close(node->inf);
+	if (node->outfile != 1)
+		close(node->outfile);
+}
+
+void	safe_pipe(int fd[2])
+{
+	if (pipe(fd) == -1)
+		msg_error("pipe");
+}
+
+void	msg_error_fork(void)
+{
+	static int	error_printed;
+
+	if (!error_printed)
+	{
+		perror("fork");
+		error_printed = 1;
+	}
+	else
+		return ;
+}
+
+int	safe_fork(void)
+{
+	int	id;
+
+	id = fork();
+	if (id == -1)
+		msg_error_fork();
+	return (id);
+}
+
+void	msg_error(char *str)
+{
+	perror(str);
+	return ;
+}
+
+char	*ft_strjoin_with_sep(char *s1, char *s2, char sep)
+{
+	int		i;
+	int		j;
+	char	*result;
+
+	i = -1;
+	if (!s1 || !s2)
+		return (NULL);
+	result = malloc(ft_strlen(s1) + ft_strlen(s2) + 2);
+	if (!result)
+		return (NULL);
+	while (s1[++i])
+		result[i] = s1[i];
+	result[i] = sep;
+	j = i + 1;
+	i = -1;
+	while (s2[++i])
+		result[j + i] = s2[i];
+	result[j + i] = '\0';
+	return (result);
+}
+
+int	check(char *my_argv)
+{
+	if (!my_argv)
+		return (1);
+	if (my_argv[0] == '/' || my_argv[0] == '.')
+	{
+		if (access(my_argv, F_OK | X_OK) == 0)
+			return (1);
+		else
+		{
+			msg_error("minishell");
+			exit_status(126, 1);
+			exit(126);
+		}
+	}
+	return (0);
+}
+
+char	*command(char *my_argv, char **envr)
+{
+	char	**path;
+	char	*joiner;
+	char	*command_path;
+	int		i;
+
+	if (check(my_argv))
+		return (my_argv);
+	path = get_path(envr);
+	if (!path)
+		return (NULL);
+	i = 0;
+	while (path[i])
+	{
+		if (access(my_argv, F_OK | X_OK) == 0)
+			return (my_argv);
+		joiner = ft_strjoin(path[i], "/");
+		command_path = ft_strjoin(joiner, my_argv);
+		free(joiner);
+		if (access(command_path, F_OK | X_OK) == 0)
+			return (free_str_array(path), command_path);
+		free(command_path);
+		i++;
+	}
+	return (free_str_array(path), NULL);
+}
+
+void	free_str_array(char **arr)
+{
+	int	i;
+
+	i = 0;
+	if (arr)
+	{
+		while (arr[i])
+		{
+			free(arr[i]);
+			i++;
+		}
+		free(arr);
+	}
+}
+
+char	**get_path(char **envr)
+{
+	int		i;
+	char	**s;
+
+	i = 0;
+	while (envr[i])
+	{
+		if (!ft_strncmp("PATH=", envr[i], 5))
+			break ;
+		i++;
+	}
+	if (!envr[i])
+		return (NULL);
+	s = ft_split(envr[i] + 5, ':');
+	return (s);
+}
+
 void	waits(t_execute *exec)
 {
 	int		status;

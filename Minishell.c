@@ -2,7 +2,6 @@
 
 int	g_signal_status;
 
-/* Run a single pipeline string (may contain |). Returns exit status or -1 on error. */
 static int	run_pipeline_string(char *pipe_str, t_list *list)
 {
 	char	**res;
